@@ -36,8 +36,8 @@ typedef struct {
   double instant_perf;
 } heartbeat_record_t;
 
-typedef void (heartbeat_window_complete) (struct heartbeat_t* hb,
-                                          heartbeat_record_t* window_buffer,
+typedef void (heartbeat_window_complete) (const struct heartbeat_t* hb,
+                                          const heartbeat_record_t* window_buffer,
                                           uint64_t window_size);
 
 typedef struct {

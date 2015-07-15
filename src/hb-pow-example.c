@@ -8,8 +8,8 @@
 #include <unistd.h>
 #include "heartbeat-pow.h"
 
-void window_complete(heartbeat_t* hb,
-                     heartbeat_record_t* window_buffer,
+void window_complete(const heartbeat_t* hb,
+                     const heartbeat_record_t* window_buffer,
                      uint64_t window_size) {
   static int first = 1;
   // we should log the data or else we'll lose it
