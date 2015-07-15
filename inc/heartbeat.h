@@ -19,13 +19,13 @@ extern "C" {
  * @param hb
  * @param window_size
  * @param window_buffer
- * @param hbf_callback
+ * @param hwc_callback
  * @return 0 on success, another value otherwise
  */
 int heartbeat_init(heartbeat_t* hb,
                    uint64_t window_size,
                    heartbeat_record_t* window_buffer,
-                   heartbeat_buffer_full* hbf_callback);
+                   heartbeat_window_complete* hwc_callback);
 
 /**
  * Registers a heartbeat.

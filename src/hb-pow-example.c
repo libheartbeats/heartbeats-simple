@@ -8,11 +8,11 @@
 #include <unistd.h>
 #include "heartbeat-pow.h"
 
-static heartbeat_t heart;
-
-void buffer_full_cb(heartbeat_record_t* window_buffer, uint64_t window_size) {
+void buffer_full_cb(heartbeat_t* hb,
+                    heartbeat_record_t* window_buffer,
+                    uint64_t window_size) {
   // we should log the data or else we'll lose it
-  heartbeat_log_window_buffer(&heart, stdout, 0);
+  heartbeat_log_window_buffer(hb, stdout, 0);
 }
 
 static inline int64_t get_time() {
@@ -29,6 +29,7 @@ int main(int argc, char** argv) {
   int64_t end_time;
 
   // initialize heartbeat
+  heartbeat_t heart;
   heartbeat_record_t* window_buffer = malloc(window_size * sizeof(heartbeat_record_t));
   heartbeat_init(&heart, window_size, window_buffer, &buffer_full_cb);
 

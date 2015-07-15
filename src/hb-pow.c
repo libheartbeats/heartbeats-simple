@@ -29,7 +29,7 @@ static inline void init_energy_data(heartbeat_energy_data* ed) {
 int heartbeat_init(heartbeat_t* hb,
                    uint64_t window_size,
                    heartbeat_record_t* window_buffer,
-                   heartbeat_buffer_full* hbf_callback) {
+                   heartbeat_window_complete* hwc_callback) {
   if (hb == NULL || window_buffer == NULL || window_size <= 0) {
     return 1;
   }
@@ -44,7 +44,7 @@ int heartbeat_init(heartbeat_t* hb,
   hb->window_buffer = window_buffer;
   // cheap way to set initial values to 0 (necessary for managing window data)
   memset(hb->window_buffer, 0, window_size * sizeof(heartbeat_record_t));
-  hb->hbf_callback = hbf_callback;
+  hb->hwc_callback = hwc_callback;
 
   return 0;
 }
@@ -140,8 +140,8 @@ void heartbeat_pow(heartbeat_t* hb,
 
   // check circular buffer, issue callback if full
   if (hb->buffer_index % hb->window_size == 0) {
-    if (hb->hbf_callback != NULL) {
-      (*hb->hbf_callback)(hb->window_buffer, hb->window_size);
+    if (hb->hwc_callback != NULL) {
+      (*hb->hwc_callback)(hb, hb->window_buffer, hb->window_size);
     }
     hb->buffer_index = 0;
   }

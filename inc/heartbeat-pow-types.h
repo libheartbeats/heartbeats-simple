@@ -10,8 +10,9 @@
 extern "C" {
 #endif
 
-#include <stdio.h>
 #include <stdint.h>
+
+struct heartbeat_t;
 
 typedef struct {
   int64_t total_time;
@@ -45,9 +46,11 @@ typedef struct {
   double instant_pwr;
 } heartbeat_record_t;
 
-typedef void (heartbeat_buffer_full) (heartbeat_record_t* window_buffer, uint64_t window_size);
+typedef void (heartbeat_window_complete) (struct heartbeat_t* hb,
+                                          heartbeat_record_t* window_buffer,
+                                          uint64_t window_size);
 
-typedef struct {
+typedef struct heartbeat_t {
   uint64_t window_size;
   uint64_t counter;
 
@@ -59,7 +62,7 @@ typedef struct {
   heartbeat_record_t* window_buffer;
   uint64_t buffer_index;
   uint64_t read_index;
-  heartbeat_buffer_full* hbf_callback;
+  heartbeat_window_complete* hwc_callback;
 } heartbeat_t;
 
 #ifdef __cplusplus
