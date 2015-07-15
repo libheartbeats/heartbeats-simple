@@ -2,7 +2,7 @@ CXX = /usr/bin/gcc
 CXXFLAGS = -fPIC -Wall -Wno-unknown-pragmas -Iinc -Llib -O6
 DBG = -g
 DEFINES ?=
-LDFLAGS = -shared -lpthread -lrt -lm
+LDFLAGS = -shared
 
 BINDIR = ./bin
 LIBDIR = ./lib
@@ -26,7 +26,7 @@ $(BINDIR)/%.o : $(SRCDIR)/%.c
 $(BINS) : $(OBJS)
 
 $(BINS) : % : %.o
-	$(CXX) $(CXXFLAGS) -o $@ $< -Llib -lhbs-pow -lpthread -lrt -lm
+	$(CXX) $(CXXFLAGS) -o $@ $< -Llib -lhbs-pow
 
 $(LIBDIR)/libhbs-pow.so: $(SRCDIR)/hb-pow.c $(SRCDIR)/hb-util.c
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -Wl,-soname,$(@F) -o $@ $^
