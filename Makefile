@@ -29,7 +29,7 @@ $(BINS) : % : %.o
 	$(CXX) $(CXXFLAGS) -o $@ $< -Llib -lhbs-pow
 
 $(LIBDIR)/libhbs-pow.so: $(SRCDIR)/hb-pow.c $(SRCDIR)/hb-util.c
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -Wl,-soname,$(@F) -o $@ $^
+	$(CXX) $(CXXFLAGS) -DHEARTBEAT_MODE_POW $(LDFLAGS) -Wl,-soname,$(@F) -o $@ $^
 
 # Installation
 install: all

@@ -174,8 +174,12 @@ double hb_get_instant_power(const heartbeat_t* hb) {
   return hb->window_buffer[hb->read_index].instant_pwr;
 }
 
-uint64_t hbr_get_energy(const heartbeat_record_t* hbr) {
-  return hbr->energy;
+uint64_t hbr_get_start_energy(const heartbeat_record_t* hbr) {
+  return hbr->start_energy;
+}
+
+uint64_t hbr_get_end_energy(const heartbeat_record_t* hbr) {
+  return hbr->end_energy;
 }
 
 double hbr_get_global_power(const heartbeat_record_t* hbr) {
