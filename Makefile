@@ -1,5 +1,5 @@
 CXX = /usr/bin/gcc
-CXXFLAGS = -fPIC -Wall -Wno-unknown-pragmas -Iinc -Llib -O6
+CXXFLAGS = -fPIC -Wall -Wno-unknown-pragmas -Iinc -O6
 DBG = -g
 DEFINES ?=
 LDFLAGS = -shared
@@ -34,12 +34,12 @@ $(LIBDIR)/libhbs-pow.so: $(SRCDIR)/hb-pow.c $(SRCDIR)/hb-util.c
 # Installation
 install: all
 	install -m 0644 $(LIBDIR)/*.so /usr/local/lib/
-	mkdir -p /usr/local/include/heartbeats
-	install -m 0644 $(INCDIR)/* /usr/local/include/heartbeats/
+	mkdir -p /usr/local/include/heartbeats-simple
+	install -m 0644 $(INCDIR)/* /usr/local/include/heartbeats-simple/
 
 uninstall:
 	rm -f /usr/local/lib/libhbs-*.so
-	rm -rf /usr/local/include/heartbeats/
+	rm -rf /usr/local/include/heartbeats-simple/
 
 ## cleaning
 clean:

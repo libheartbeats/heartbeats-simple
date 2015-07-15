@@ -13,6 +13,7 @@ extern "C" {
 #include <stdint.h>
 
 struct heartbeat_t;
+typedef struct heartbeat_t heartbeat_t;
 
 typedef struct {
   int64_t total_time;
@@ -47,24 +48,23 @@ typedef struct {
   double instant_pwr;
 } heartbeat_record_t;
 
-typedef void (heartbeat_window_complete) (const struct heartbeat_t* hb,
+typedef void (heartbeat_window_complete) (const heartbeat_t* hb,
                                           const heartbeat_record_t* window_buffer,
                                           uint64_t window_size);
 
-typedef struct heartbeat_t {
-  uint64_t window_size;
+struct heartbeat_t {
   uint64_t counter;
+  uint64_t buffer_index;
+  uint64_t read_index;
+  uint64_t window_size;
+  heartbeat_record_t* window_buffer;
+  heartbeat_window_complete* hwc_callback;
 
   // data
   heartbeat_time_data td;
   heartbeat_work_data wd;
   heartbeat_energy_data ed;
-
-  heartbeat_record_t* window_buffer;
-  uint64_t buffer_index;
-  uint64_t read_index;
-  heartbeat_window_complete* hwc_callback;
-} heartbeat_t;
+};
 
 #ifdef __cplusplus
 }
