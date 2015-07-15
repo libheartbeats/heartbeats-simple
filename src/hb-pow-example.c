@@ -13,7 +13,7 @@ void window_complete(const heartbeat_t* hb,
                      uint64_t window_size) {
   static int first = 1;
   // we should log the data or else we'll lose it
-  heartbeat_log_window_buffer(hb, stdout, first);
+  heartbeat_log_window_buffer(hb, fileno(stdout), first);
   first = 0;
 }
 
@@ -30,8 +30,8 @@ static inline int64_t get_time() {
 
 int main(int argc, char** argv) {
   uint64_t i;
-  const int iterations = 40;
-  const int window_size = 20;
+  const int iterations = 10;
+  const int window_size = 5;
   int64_t start_time, end_time;
   uint64_t start_energy, end_energy;
 

@@ -10,7 +10,6 @@
 extern "C" {
 #endif
 
-#include <stdio.h>
 #include "heartbeat-types.h"
 
 /**
@@ -46,11 +45,11 @@ void heartbeat(heartbeat_t* hb,
  * Logs the circular window buffer up to the current read index.
  *
  * @param hb
- * @param log
+ * @param fd
  * @param print_header
  * @return 0 on success, error code otherwise
  */
-int heartbeat_log_window_buffer(const heartbeat_t* hb, FILE* log, int print_header);
+int heartbeat_log_window_buffer(const heartbeat_t* hb, int fd, int print_header);
 
 /**
  * Returns the size of the sliding window used to compute the current heart

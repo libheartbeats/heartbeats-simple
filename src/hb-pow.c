@@ -49,10 +49,14 @@ int heartbeat_init(heartbeat_t* hb,
   return 0;
 }
 
-int heartbeat_log_window_buffer(const heartbeat_t* hb, FILE* log, int print_header) {
-  int ret = 1;
+int heartbeat_log_window_buffer(const heartbeat_t* hb, int fd, int print_header) {
+  int ret;
   uint64_t i;
-  if (log != NULL) {
+  FILE* log = fdopen(fd, "w");
+  if (log == NULL) {
+    perror("Failed to open log file for writing");
+    ret = 1;
+  } else {
     if (print_header) {
       fprintf(log,
               "HB    Tag    "
