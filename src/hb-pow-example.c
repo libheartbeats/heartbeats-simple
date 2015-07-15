@@ -22,17 +22,17 @@ static inline uint64_t get_energy() {
   return energy += 1000;
 }
 
-static inline int64_t get_time() {
+static inline uint64_t get_time() {
   struct timespec time_info;
   clock_gettime(CLOCK_REALTIME, &time_info);
-  return (int64_t) time_info.tv_sec * 1000000000 + (int64_t) time_info.tv_nsec;
+  return (uint64_t) time_info.tv_sec * 1000000000 + (uint64_t) time_info.tv_nsec;
 }
 
 int main(int argc, char** argv) {
   uint64_t i;
   const int iterations = 10;
   const int window_size = 5;
-  int64_t start_time, end_time;
+  uint64_t start_time, end_time;
   uint64_t start_energy, end_energy;
 
   // initialize heartbeat

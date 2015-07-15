@@ -66,7 +66,7 @@ int heartbeat_log_window_buffer(const heartbeat_t* hb, int fd, int print_header)
     for (i = 0; i < hb->buffer_index; i++) {
       fprintf(log,
               "%" PRIu64"    %" PRIu64"    "
-              "%" PRIu64"    %" PRIi64"    %" PRIi64"    %f    %f    %f    "
+              "%" PRIu64"    %" PRIu64"    %" PRIu64"    %f    %f    %f    "
               "%" PRIu64"    %" PRIu64"    %f    %f    %f\n",
               hb->window_buffer[i].id,
               hb->window_buffer[i].user_tag,
@@ -92,12 +92,13 @@ int heartbeat_log_window_buffer(const heartbeat_t* hb, int fd, int print_header)
 void heartbeat_pow(heartbeat_t* hb,
                    uint64_t user_tag,
                    uint64_t work,
-                   int64_t start_time,
-                   int64_t end_time,
+                   uint64_t start_time,
+                   uint64_t end_time,
                    uint64_t start_energy,
                    uint64_t end_energy) {
+  // these could be < 0, but it's not actually harmful
   int64_t delta_time = end_time - start_time;
-  uint64_t delta_energy = end_energy - start_energy;
+  int64_t delta_energy = end_energy - start_energy;
 
   // update total data
   hb->td.total_time += delta_time;
@@ -157,7 +158,7 @@ void heartbeat_pow(heartbeat_t* hb,
 void heartbeat(heartbeat_t* hb,
                uint64_t user_tag,
                uint64_t work,
-               int64_t start_time,
-               int64_t end_time) {
+               uint64_t start_time,
+               uint64_t end_time) {
   heartbeat_pow(hb, user_tag, work, start_time, end_time, 0, 0);
 }

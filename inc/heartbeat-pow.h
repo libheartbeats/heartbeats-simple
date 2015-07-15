@@ -28,8 +28,8 @@ extern "C" {
 void heartbeat_pow(heartbeat_t* hb,
                    uint64_t user_tag,
                    uint64_t work,
-                   int64_t start_time,
-                   int64_t end_time,
+                   uint64_t start_time,
+                   uint64_t end_time,
                    uint64_t start_energy,
                    uint64_t end_energy);
 

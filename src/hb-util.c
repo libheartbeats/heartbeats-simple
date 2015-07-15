@@ -41,11 +41,11 @@ uint64_t hb_get_user_tag(const heartbeat_t* hb) {
   return hb->window_buffer[hb->read_index].user_tag;
 }
 
-int64_t hb_get_global_time(const heartbeat_t* hb) {
+uint64_t hb_get_global_time(const heartbeat_t* hb) {
   return hb->td.total_time;
 }
 
-int64_t hb_get_window_time(const heartbeat_t* hb) {
+uint64_t hb_get_window_time(const heartbeat_t* hb) {
   return hb->td.window_time;
 }
 
@@ -127,11 +127,11 @@ uint64_t hbr_get_work(const heartbeat_record_t* hbr) {
   return hbr->work;
 }
 
-int64_t hbr_get_start_time(const heartbeat_record_t* hbr) {
+uint64_t hbr_get_start_time(const heartbeat_record_t* hbr) {
   return hbr->start_time;
 }
 
-int64_t hbr_get_end_time(const heartbeat_record_t* hbr) {
+uint64_t hbr_get_end_time(const heartbeat_record_t* hbr) {
   return hbr->end_time;
 }
 

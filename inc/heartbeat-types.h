@@ -16,8 +16,8 @@ struct heartbeat_t;
 typedef struct heartbeat_t heartbeat_t;
 
 typedef struct {
-  int64_t total_time;
-  int64_t window_time;
+  uint64_t total_time;
+  uint64_t window_time;
 } heartbeat_time_data;
 
 typedef struct {
@@ -30,8 +30,8 @@ typedef struct {
   uint64_t user_tag;
 
   uint64_t work;
-  int64_t start_time;
-  int64_t end_time;
+  uint64_t start_time;
+  uint64_t end_time;
   double global_perf;
   double window_perf;
   double instant_perf;

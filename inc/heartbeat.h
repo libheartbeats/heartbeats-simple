@@ -38,8 +38,8 @@ int heartbeat_init(heartbeat_t* hb,
 void heartbeat(heartbeat_t* hb,
                uint64_t user_tag,
                uint64_t work,
-               int64_t start_time,
-               int64_t end_time);
+               uint64_t start_time,
+               uint64_t end_time);
 
 /**
  * Logs the circular window buffer up to the current read index.
@@ -72,17 +72,17 @@ uint64_t hb_get_user_tag(const heartbeat_t* hb);
  * Get the total time for the life of this heartbeat.
  *
  * @param hb pointer to heartbeat_t
- * @return the total time (int64_t)
+ * @return the total time (uint64_t)
  */
-int64_t hb_get_global_time(const heartbeat_t* hb);
+uint64_t hb_get_global_time(const heartbeat_t* hb);
 
 /**
  * Get the current window time for this heartbeat.
  *
  * @param hb pointer to heartbeat_t
- * @return the window time (int64_t)
+ * @return the window time (uint64_t)
  */
-int64_t hb_get_window_time(const heartbeat_t* hb);
+uint64_t hb_get_window_time(const heartbeat_t* hb);
 
 /**
  * Get the total work for the life of this heartbeat.
@@ -166,9 +166,9 @@ uint64_t hbr_get_user_tag(const heartbeat_record_t* hbr);
  * Returns the timestamp for this record.
  *
  * @param hbr
- * @return the timestamp (int64_t)
+ * @return the timestamp (uint64_t)
  */
-int64_t hbr_get_timestamp(const heartbeat_record_t* hbr);
+uint64_t hbr_get_timestamp(const heartbeat_record_t* hbr);
 
 /**
  * Returns the work completed for this record.
@@ -182,17 +182,17 @@ uint64_t hbr_get_work(const heartbeat_record_t* hbr);
  * Returns the start time for this record.
  *
  * @param hbr
- * @return the start time (int64_t)
+ * @return the start time (uint64_t)
  */
-int64_t hbr_get_start_time(const heartbeat_record_t* hbr);
+uint64_t hbr_get_start_time(const heartbeat_record_t* hbr);
 
 /**
  * Returns the end time for this record.
  *
  * @param hbr
- * @return the end time (int64_t)
+ * @return the end time (uint64_t)
  */
-int64_t hbr_get_end_time(const heartbeat_record_t* hbr);
+uint64_t hbr_get_end_time(const heartbeat_record_t* hbr);
 
 /**
  * Returns the global rate recorded in this record.
