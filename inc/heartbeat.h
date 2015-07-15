@@ -1,7 +1,6 @@
 /**
- * Heartbeats API for monitoring program performance.
+ * A performance monitoring API.
  *
- * @author Hank Hoffmann
  * @author Connor Imes
  */
 #ifndef _HEARTBEAT_H_
@@ -11,95 +10,96 @@
 extern "C" {
 #endif
 
+#include <stdio.h>
 #include "heartbeat-types.h"
-#include <stdint.h>
 
 /**
- * Initialization function for process that
- * wants to register heartbeats
+ * Initialize a heartbeats instance.
  *
- * @param window_size int64_t
- * @param buffer_depth int64_t
- * @param log_name pointer to char
- * @param min_target double
- * @param max_target double
+ * @param hb
+ * @param window_size
+ * @param window_buffer
+ * @param hbf_callback
+ * @return 0 on success, another value otherwise
  */
-heartbeat_t* heartbeat_init(int64_t window_size,
-                            int64_t buffer_depth,
-                            const char* log_name,
-                            double min_target,
-                            double max_target);
+int heartbeat_init(heartbeat_t* hb,
+                   uint64_t window_size,
+                   heartbeat_record_t* window_buffer,
+                   heartbeat_buffer_full* hbf_callback);
 
 /**
- * Registers a heartbeat
+ * Registers a heartbeat.
  *
- * @param hb pointer to heartbeat_t
- * @param tag integer
+ * @param hb
+ * @param user_tag
+ * @param work
+ * @param start_time (ns)
+ * @param end_time (ns)
  */
-int64_t heartbeat(heartbeat_t* hb,
-                  int tag);
+void heartbeat(heartbeat_t* hb,
+               uint64_t user_tag,
+               uint64_t work,
+               int64_t start_time,
+               int64_t end_time);
 
 /**
- * Cleanup function for process that
- * wants to register heartbeats
+ * Logs the circular window buffer up to the current read index.
  *
- * @param hb pointer to heartbeat_t
+ * @param hb
+ * @param log
+ * @param print_header
+ * @return 0 on success, error code otherwise
  */
-void heartbeat_finish(heartbeat_t * hb);
+int heartbeat_log_window_buffer(const heartbeat_t* hb, FILE* log, int print_header);
 
 /**
  * Returns the size of the sliding window used to compute the current heart
  * rate
  *
  * @param hb pointer to heartbeat_t
- * @return the size of the sliding window (int64_t)
+ * @return the size of the sliding window (uint64_t)
  */
-int64_t hb_get_window_size(heartbeat_t volatile * hb);
+uint64_t hb_get_window_size(const heartbeat_t* hb);
 
 /**
- * Returns the buffer depth of the log
- * rate
+ * Returns the current user tag
  *
  * @param hb pointer to heartbeat_t
- * @return the buffer depth (int64_t)
+ * @return the current user tag (uint64_t)
  */
-int64_t hb_get_buffer_depth(heartbeat_t volatile * hb);
+uint64_t hb_get_user_tag(const heartbeat_t* hb);
 
 /**
- * Returns the record for the current heartbeat
- * currently may read old data
+ * Get the total time for the life of this heartbeat.
  *
  * @param hb pointer to heartbeat_t
+ * @return the total time (int64_t)
  */
-void hb_get_current(heartbeat_t volatile * hb,
-                    heartbeat_record_t volatile * record);
+int64_t hb_get_global_time(const heartbeat_t* hb);
 
 /**
- * Returns all heartbeat information for the last n heartbeats
+ * Get the current window time for this heartbeat.
  *
  * @param hb pointer to heartbeat_t
- * @param record pointer to heartbeat_record_t
- * @param n int64_t
+ * @return the window time (int64_t)
  */
-int64_t hb_get_history(heartbeat_t volatile * hb,
-                       heartbeat_record_t volatile * record,
-                       int64_t n);
+int64_t hb_get_window_time(const heartbeat_t* hb);
 
 /**
- * Returns the minimum desired heart rate
+ * Get the total work for the life of this heartbeat.
  *
  * @param hb pointer to heartbeat_t
- * @return the minimum desired heart rate (double)
+ * @return the total work (uint64_t)
  */
-double hb_get_min_rate(heartbeat_t volatile * hb);
+uint64_t hb_get_global_work(const heartbeat_t* hb);
 
 /**
- * Returns the maximum desired heart rate
+ * Get the current window work for this heartbeat.
  *
  * @param hb pointer to heartbeat_t
- * @return the maximum desired heart rate (double)
+ * @return the window work (uint64_t)
  */
-double hb_get_max_rate(heartbeat_t volatile * hb);
+uint64_t hb_get_window_work(const heartbeat_t* hb);
 
 /**
  * Returns the heart rate over the life of the entire application
@@ -107,7 +107,7 @@ double hb_get_max_rate(heartbeat_t volatile * hb);
  * @param hb pointer to heartbeat_t
  * @return the heart rate (double) over the entire life of the application
  */
-double hb_get_global_rate(heartbeat_t volatile * hb);
+double hb_get_global_rate(const heartbeat_t* hb);
 
 /**
  * Returns the heart rate over the last window (as specified to init)
@@ -116,7 +116,7 @@ double hb_get_global_rate(heartbeat_t volatile * hb);
  * @param hb pointer to heartbeat_t
  * @return the heart rate (double) over the last window
  */
-double hb_get_windowed_rate(heartbeat_t volatile * hb);
+double hb_get_window_rate(const heartbeat_t* hb);
 
 /**
  * Returns the heart rate for the last heartbeat.
@@ -124,49 +124,100 @@ double hb_get_windowed_rate(heartbeat_t volatile * hb);
  * @param hb pointer to heartbeat_t
  * @return the heart rate (double) for the last heartbeat
  */
-double hb_get_instant_rate(heartbeat_t volatile * hb);
+double hb_get_instant_rate(const heartbeat_t* hb);
 
 /**
- * Returns the heartbeat number for this record.
+ * Returns the record for the current heartbeat
+ * currently may read old data
+ *
+ * @param hb pointer to heartbeat_t
+ * @param record pointer to record to fill
+ */
+void hb_get_current(const heartbeat_t* hb,
+                    heartbeat_record_t* record);
+
+/**
+ * Returns all heartbeat information for the last n heartbeats
+ *
+ * @param hb pointer to heartbeat_t
+ * @param record pointer to heartbeat_record_t
+ * @param n uint64_t
+ */
+uint64_t hb_get_history(const heartbeat_t* hb,
+                        heartbeat_record_t* record,
+                        uint64_t n);
+
+/**
+ * Returns the local heartbeat number for this record.
  *
  * @param hbr
+ * @return the local beat number (uint64_t)
  */
-int64_t hbr_get_beat_number(heartbeat_record_t volatile * hbr);
+uint64_t hbr_get_beat_number(const heartbeat_record_t* hbr);
 
 /**
  * Returns the tag number for this record.
  *
  * @param hbr
+ * @return the user-specified tag number (uint64_t)
  */
-int hbr_get_tag(heartbeat_record_t volatile * hbr);
+uint64_t hbr_get_user_tag(const heartbeat_record_t* hbr);
 
 /**
  * Returns the timestamp for this record.
  *
  * @param hbr
+ * @return the timestamp (int64_t)
  */
-int64_t hbr_get_timestamp(heartbeat_record_t volatile * hbr);
+int64_t hbr_get_timestamp(const heartbeat_record_t* hbr);
+
+/**
+ * Returns the work completed for this record.
+ *
+ * @param hbr
+ * @return the work completed (uint64_t)
+ */
+uint64_t hbr_get_work(const heartbeat_record_t* hbr);
+
+/**
+ * Returns the start time for this record.
+ *
+ * @param hbr
+ * @return the start time (int64_t)
+ */
+int64_t hbr_get_start_time(const heartbeat_record_t* hbr);
+
+/**
+ * Returns the end time for this record.
+ *
+ * @param hbr
+ * @return the end time (int64_t)
+ */
+int64_t hbr_get_end_time(const heartbeat_record_t* hbr);
 
 /**
  * Returns the global rate recorded in this record.
  *
  * @param hbr
+ * @return the global rate (double)
  */
-double hbr_get_global_rate(heartbeat_record_t volatile * hbr);
+double hbr_get_global_rate(const heartbeat_record_t* hbr);
 
 /**
  * Returns the window rate recorded in this record.
  *
  * @param hbr
+ * @return the window rate (double)
  */
-double hbr_get_window_rate(heartbeat_record_t volatile * hbr);
+double hbr_get_window_rate(const heartbeat_record_t* hbr);
 
 /**
- * Returns the instante rate recorded in this record.
+ * Returns the instant rate recorded in this record.
  *
  * @param hbr
+ * @return the instant rate (double)
  */
-double hbr_get_instant_rate(heartbeat_record_t volatile * hbr);
+double hbr_get_instant_rate(const heartbeat_record_t* hbr);
 
 #ifdef __cplusplus
  }
