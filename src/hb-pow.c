@@ -57,13 +57,13 @@ int heartbeat_log_window_buffer(const heartbeat_t* hb, FILE* log, int print_head
       fprintf(log,
               "HB    Tag    "
               "Work    Start_Time    End_time    Global_Perf    Window_Perf    Instant_Perf    "
-              "Energy    Global_Pwr    Window_Pwr    Instant_Pwr\n");
+              "Start_Energy    End_Energy    Global_Pwr    Window_Pwr    Instant_Pwr\n");
     }
     for (i = 0; i < hb->buffer_index; i++) {
       fprintf(log,
               "%" PRIu64"    %" PRIu64"    "
               "%" PRIu64"    %" PRIi64"    %" PRIi64"    %f    %f    %f    "
-              "%" PRIu64"    %f    %f    %f\n",
+              "%" PRIu64"    %" PRIu64"    %f    %f    %f\n",
               hb->window_buffer[i].id,
               hb->window_buffer[i].user_tag,
 
@@ -74,7 +74,8 @@ int heartbeat_log_window_buffer(const heartbeat_t* hb, FILE* log, int print_head
               hb->window_buffer[i].window_perf,
               hb->window_buffer[i].instant_perf,
 
-              hb->window_buffer[i].energy,
+              hb->window_buffer[i].start_energy,
+              hb->window_buffer[i].end_energy,
               hb->window_buffer[i].global_pwr,
               hb->window_buffer[i].window_pwr,
               hb->window_buffer[i].instant_pwr);
@@ -101,9 +102,10 @@ void heartbeat_pow(heartbeat_t* hb,
 
   // now update the running window values
   // if we haven't yet reached window_size heartbeats, the log values are 0
-  hb->td.window_time += delta_time - (hb->window_buffer[hb->buffer_index].end_time - hb->window_buffer[hb->buffer_index].start_time);
-  hb->wd.window_work += work - hb->window_buffer[hb->buffer_index].work;
-  hb->ed.window_energy += delta_energy - hb->window_buffer[hb->buffer_index].energy;
+  heartbeat_record_t* old_record = &hb->window_buffer[hb->buffer_index];
+  hb->td.window_time += delta_time - (old_record->end_time - old_record->start_time);
+  hb->wd.window_work += work - old_record->work;
+  hb->ed.window_energy += delta_energy - (old_record->end_energy - old_record->start_energy);
 
   hb->counter++;
   hb->read_index = hb->buffer_index;
@@ -116,7 +118,8 @@ void heartbeat_pow(heartbeat_t* hb,
   hb->window_buffer[index].work = work;
   hb->window_buffer[index].start_time = start_time;
   hb->window_buffer[index].end_time = end_time;
-  hb->window_buffer[index].energy = delta_energy;
+  hb->window_buffer[index].start_energy = start_energy;
+  hb->window_buffer[index].end_energy = end_energy;
   if (delta_time == 0) {
     hb->window_buffer[index].global_perf = 0;
     hb->window_buffer[index].window_perf = 0;

@@ -40,7 +40,8 @@ typedef struct {
   double window_perf;
   double instant_perf;
 
-  uint64_t energy;
+  uint64_t start_energy;
+  uint64_t end_energy;
   double global_pwr;
   double window_pwr;
   double instant_pwr;
