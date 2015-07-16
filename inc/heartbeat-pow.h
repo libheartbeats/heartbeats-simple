@@ -74,38 +74,6 @@ double hb_get_window_power(const heartbeat_t* hb);
  */
 double hb_get_instant_power(const heartbeat_t* hb);
 
-/**
- * Returns the energy recorded in this record.
- *
- * @param hbr
- * @return the energy (uint64_t)
- */
-uint64_t hbr_get_energy(const heartbeat_record_t* hbr);
-
-/**
- * Returns the global power recorded in this record.
- *
- * @param hbr
- * @return the global power (double)
- */
-double hbr_get_global_power(const heartbeat_record_t* hbr);
-
-/**
- * Returns the window power recorded in this record.
- *
- * @param hbr
- * @return the window power (double)
- */
-double hbr_get_window_power(const heartbeat_record_t* hbr);
-
-/**
- * Returns the instant power recorded in this record.
- *
- * @param hbr
- * @return the instant power (double)
- */
-double hbr_get_instant_power(const heartbeat_record_t* hbr);
-
 #ifdef __cplusplus
 }
 #endif
