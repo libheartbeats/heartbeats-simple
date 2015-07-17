@@ -28,6 +28,7 @@ int heartbeat_init(heartbeat_context* hb,
   hb->buffer_index = 0;
   hb->read_index = 0;
   hb->window_size = window_size;
+  hb->lock = 0;
   init_udata(&hb->td);
   init_udata(&hb->wd);
   init_udata(&hb->ed);
@@ -90,6 +91,10 @@ void heartbeat_pow(heartbeat_context* hb,
   int64_t delta_time = end_time - start_time;
   int64_t delta_energy = end_energy - start_energy;
 
+  while (__sync_lock_test_and_set(&hb->lock, 1)) {
+    while (hb->lock);
+  }
+
   // update total data
   hb->td.global += delta_time;
   hb->wd.global += work;
@@ -103,39 +108,38 @@ void heartbeat_pow(heartbeat_context* hb,
   hb->ed.window += delta_energy - (old_record->end_energy - old_record->start_energy);
 
   hb->counter++;
-  hb->read_index = hb->buffer_index;
-  uint64_t index = hb->buffer_index;
-  hb->buffer_index++;
 
   // now store in log
-  hb->window_buffer[index].id = hb->counter - 1;
-  hb->window_buffer[index].user_tag = user_tag;
-  hb->window_buffer[index].work = work;
-  hb->window_buffer[index].start_time = start_time;
-  hb->window_buffer[index].end_time = end_time;
-  hb->window_buffer[index].start_energy = start_energy;
-  hb->window_buffer[index].end_energy = end_energy;
+  hb->window_buffer[hb->buffer_index].id = hb->counter - 1;
+  hb->window_buffer[hb->buffer_index].user_tag = user_tag;
+  hb->window_buffer[hb->buffer_index].work = work;
+  hb->window_buffer[hb->buffer_index].start_time = start_time;
+  hb->window_buffer[hb->buffer_index].end_time = end_time;
+  hb->window_buffer[hb->buffer_index].start_energy = start_energy;
+  hb->window_buffer[hb->buffer_index].end_energy = end_energy;
   if (delta_time == 0) {
-    hb->window_buffer[index].global_perf = 0;
-    hb->window_buffer[index].window_perf = 0;
-    hb->window_buffer[index].instant_perf = 0;
-    hb->window_buffer[index].global_pwr = 0;
-    hb->window_buffer[index].window_pwr = 0;
-    hb->window_buffer[index].instant_pwr = 0;
+    hb->window_buffer[hb->buffer_index].global_perf = 0;
+    hb->window_buffer[hb->buffer_index].window_perf = 0;
+    hb->window_buffer[hb->buffer_index].instant_perf = 0;
+    hb->window_buffer[hb->buffer_index].global_pwr = 0;
+    hb->window_buffer[hb->buffer_index].window_pwr = 0;
+    hb->window_buffer[hb->buffer_index].instant_pwr = 0;
   } else {
     const double one_billion = 1000000000.0;
     const double one_million = 1000000.0;
     double total_seconds = ((double) hb->td.global) / one_billion;
     double window_seconds = ((double) hb->td.window) / one_billion;
     double instant_seconds = ((double) delta_time) / one_billion;
-    hb->window_buffer[index].global_perf = ((double) hb->wd.global) / total_seconds;
-    hb->window_buffer[index].window_perf = ((double) hb->wd.window) / window_seconds;
-    hb->window_buffer[index].instant_perf = ((double) work) / instant_seconds;
-    hb->window_buffer[index].global_pwr = ((double) hb->ed.global) / total_seconds / one_million;
-    hb->window_buffer[index].window_pwr = ((double) hb->ed.window) / window_seconds / one_million;
-    hb->window_buffer[index].instant_pwr = ((double) delta_energy) / instant_seconds / one_million;
+    hb->window_buffer[hb->buffer_index].global_perf = ((double) hb->wd.global) / total_seconds;
+    hb->window_buffer[hb->buffer_index].window_perf = ((double) hb->wd.window) / window_seconds;
+    hb->window_buffer[hb->buffer_index].instant_perf = ((double) work) / instant_seconds;
+    hb->window_buffer[hb->buffer_index].global_pwr = ((double) hb->ed.global) / total_seconds / one_million;
+    hb->window_buffer[hb->buffer_index].window_pwr = ((double) hb->ed.window) / window_seconds / one_million;
+    hb->window_buffer[hb->buffer_index].instant_pwr = ((double) delta_energy) / instant_seconds / one_million;
   }
 
+  hb->read_index = hb->buffer_index;
+  hb->buffer_index++;
   // check circular buffer, issue callback if full
   if (hb->buffer_index % hb->window_size == 0) {
     if (hb->hwc_callback != NULL) {
@@ -143,6 +147,8 @@ void heartbeat_pow(heartbeat_context* hb,
     }
     hb->buffer_index = 0;
   }
+
+  __sync_lock_release(&hb->lock);
 }
 
 void heartbeat(heartbeat_context* hb,

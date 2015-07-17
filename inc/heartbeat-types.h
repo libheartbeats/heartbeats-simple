@@ -41,6 +41,7 @@ struct heartbeat_context {
   uint64_t buffer_index;
   uint64_t read_index;
   uint64_t window_size;
+  volatile int lock;
   heartbeat_record* window_buffer;
   heartbeat_window_complete* hwc_callback;
 
