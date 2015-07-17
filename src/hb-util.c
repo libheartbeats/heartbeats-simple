@@ -27,39 +27,39 @@
  */
 #if !defined(HEARTBEAT_UTIL_OVERRIDE)
 
-uint64_t hb_get_window_size(const heartbeat_t* hb) {
+uint64_t hb_get_window_size(const heartbeat_context* hb) {
   return hb->window_size;
 }
 
-uint64_t hb_get_user_tag(const heartbeat_t* hb) {
+uint64_t hb_get_user_tag(const heartbeat_context* hb) {
   return hb->window_buffer[hb->read_index].user_tag;
 }
 
-uint64_t hb_get_global_time(const heartbeat_t* hb) {
+uint64_t hb_get_global_time(const heartbeat_context* hb) {
   return hb->td.total_time;
 }
 
-uint64_t hb_get_window_time(const heartbeat_t* hb) {
+uint64_t hb_get_window_time(const heartbeat_context* hb) {
   return hb->td.window_time;
 }
 
-uint64_t hb_get_global_work(const heartbeat_t* hb) {
+uint64_t hb_get_global_work(const heartbeat_context* hb) {
   return hb->wd.total_work;
 }
 
-uint64_t hb_get_window_work(const heartbeat_t* hb) {
+uint64_t hb_get_window_work(const heartbeat_context* hb) {
   return hb->wd.window_work;
 }
 
-double hb_get_global_rate(const heartbeat_t* hb) {
+double hb_get_global_rate(const heartbeat_context* hb) {
   return hb->window_buffer[hb->read_index].global_perf;
 }
 
-double hb_get_window_rate(const heartbeat_t* hb) {
+double hb_get_window_rate(const heartbeat_context* hb) {
   return hb->window_buffer[hb->read_index].window_perf;
 }
 
-double hb_get_instant_rate(const heartbeat_t* hb) {
+double hb_get_instant_rate(const heartbeat_context* hb) {
   return hb->window_buffer[hb->read_index].instant_perf;
 }
 
@@ -70,23 +70,23 @@ double hb_get_instant_rate(const heartbeat_t* hb) {
  */
 #if defined(HEARTBEAT_MODE_POW) && !defined(HEARTBEAT_POWER_UTIL_OVERRIDE)
 
-uint64_t hb_get_global_energy(const heartbeat_t* hb) {
+uint64_t hb_get_global_energy(const heartbeat_context* hb) {
   return hb->ed.total_energy;
 }
 
-uint64_t hb_get_window_energy(const heartbeat_t* hb) {
+uint64_t hb_get_window_energy(const heartbeat_context* hb) {
   return hb->ed.window_energy;
 }
 
-double hb_get_global_power(const heartbeat_t* hb) {
+double hb_get_global_power(const heartbeat_context* hb) {
   return hb->window_buffer[hb->read_index].global_pwr;
 }
 
-double hb_get_window_power(const heartbeat_t* hb) {
+double hb_get_window_power(const heartbeat_context* hb) {
   return hb->window_buffer[hb->read_index].window_pwr;
 }
 
-double hb_get_instant_power(const heartbeat_t* hb) {
+double hb_get_instant_power(const heartbeat_context* hb) {
   return hb->window_buffer[hb->read_index].instant_pwr;
 }
 

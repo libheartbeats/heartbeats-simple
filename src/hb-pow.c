@@ -26,11 +26,11 @@ static inline void init_energy_data(heartbeat_energy_data* ed) {
   ed->window_energy = 0;
 }
 
-int heartbeat_init(heartbeat_t* hb,
+int heartbeat_init(heartbeat_context* hb,
                    uint64_t window_size,
-                   heartbeat_record_t* window_buffer,
+                   heartbeat_record* window_buffer,
                    heartbeat_window_complete* hwc_callback) {
-  if (hb == NULL || window_buffer == NULL || window_size <= 0) {
+  if (hb == NULL || window_buffer == NULL || window_size == 0) {
     return 1;
   }
 
@@ -43,13 +43,13 @@ int heartbeat_init(heartbeat_t* hb,
   init_energy_data(&hb->ed);
   hb->window_buffer = window_buffer;
   // cheap way to set initial values to 0 (necessary for managing window data)
-  memset(hb->window_buffer, 0, window_size * sizeof(heartbeat_record_t));
+  memset(hb->window_buffer, 0, window_size * sizeof(heartbeat_record));
   hb->hwc_callback = hwc_callback;
 
   return 0;
 }
 
-int heartbeat_log_window_buffer(const heartbeat_t* hb, int fd, int print_header) {
+int heartbeat_log_window_buffer(const heartbeat_context* hb, int fd, int print_header) {
   int ret;
   uint64_t i;
   FILE* log = fdopen(fd, "w");
@@ -89,7 +89,7 @@ int heartbeat_log_window_buffer(const heartbeat_t* hb, int fd, int print_header)
   return ret;
 }
 
-void heartbeat_pow(heartbeat_t* hb,
+void heartbeat_pow(heartbeat_context* hb,
                    uint64_t user_tag,
                    uint64_t work,
                    uint64_t start_time,
@@ -107,7 +107,7 @@ void heartbeat_pow(heartbeat_t* hb,
 
   // now update the running window values
   // if we haven't yet reached window_size heartbeats, the log values are 0
-  heartbeat_record_t* old_record = &hb->window_buffer[hb->buffer_index];
+  heartbeat_record* old_record = &hb->window_buffer[hb->buffer_index];
   hb->td.window_time += delta_time - (old_record->end_time - old_record->start_time);
   hb->wd.window_work += work - old_record->work;
   hb->ed.window_energy += delta_energy - (old_record->end_energy - old_record->start_energy);
@@ -155,7 +155,7 @@ void heartbeat_pow(heartbeat_t* hb,
   }
 }
 
-void heartbeat(heartbeat_t* hb,
+void heartbeat(heartbeat_context* hb,
                uint64_t user_tag,
                uint64_t work,
                uint64_t start_time,

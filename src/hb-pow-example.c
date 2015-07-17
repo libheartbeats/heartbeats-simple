@@ -8,8 +8,8 @@
 #include <unistd.h>
 #include "heartbeat-pow.h"
 
-void window_complete(const heartbeat_t* hb,
-                     const heartbeat_record_t* window_buffer,
+void window_complete(const heartbeat_context* hb,
+                     const heartbeat_record* window_buffer,
                      uint64_t window_size) {
   static int first = 1;
   // we should log the data or else we'll lose it
@@ -36,9 +36,9 @@ int main(int argc, char** argv) {
   uint64_t start_energy, end_energy;
 
   // initialize heartbeat
-  heartbeat_t heart;
-  heartbeat_record_t* window_buffer = malloc(window_size * sizeof(heartbeat_record_t));
-  heartbeat_init(&heart, window_size, window_buffer, &window_complete);
+  heartbeat_context hb;
+  heartbeat_record* window_buffer = malloc(window_size * sizeof(heartbeat_record));
+  heartbeat_init(&hb, window_size, window_buffer, &window_complete);
 
   for(i = 0; i < iterations; i++) {
     start_time = get_time();
@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
     usleep(1000);
     end_time = get_time();
     end_energy = get_energy();
-    heartbeat_pow(&heart, i, 1, start_time, end_time, start_energy, end_energy);
+    heartbeat_pow(&hb, i, 1, start_time, end_time, start_energy, end_energy);
   }
 
   // cleanup
