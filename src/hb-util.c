@@ -36,19 +36,19 @@ uint64_t hb_get_user_tag(const heartbeat_context* hb) {
 }
 
 uint64_t hb_get_global_time(const heartbeat_context* hb) {
-  return hb->td.total_time;
+  return hb->td.global;
 }
 
 uint64_t hb_get_window_time(const heartbeat_context* hb) {
-  return hb->td.window_time;
+  return hb->td.window;
 }
 
 uint64_t hb_get_global_work(const heartbeat_context* hb) {
-  return hb->wd.total_work;
+  return hb->wd.global;
 }
 
 uint64_t hb_get_window_work(const heartbeat_context* hb) {
-  return hb->wd.window_work;
+  return hb->wd.window;
 }
 
 double hb_get_global_rate(const heartbeat_context* hb) {
@@ -71,11 +71,11 @@ double hb_get_instant_rate(const heartbeat_context* hb) {
 #if defined(HEARTBEAT_MODE_POW) && !defined(HEARTBEAT_POWER_UTIL_OVERRIDE)
 
 uint64_t hb_get_global_energy(const heartbeat_context* hb) {
-  return hb->ed.total_energy;
+  return hb->ed.global;
 }
 
 uint64_t hb_get_window_energy(const heartbeat_context* hb) {
-  return hb->ed.window_energy;
+  return hb->ed.window;
 }
 
 double hb_get_global_power(const heartbeat_context* hb) {

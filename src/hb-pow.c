@@ -11,19 +11,9 @@
 
 #define __STDC_FORMAT_MACROS
 
-static inline void init_time_data(heartbeat_time_data* td) {
-  td->total_time = 0;
-  td->window_time = 0;
-}
-
-static inline void init_work_data(heartbeat_work_data* td) {
-  td->total_work = 0;
-  td->window_work = 0;
-}
-
-static inline void init_energy_data(heartbeat_energy_data* ed) {
-  ed->total_energy = 0;
-  ed->window_energy = 0;
+static inline void init_udata(heartbeat_udata* data) {
+  data->global = 0;
+  data->window = 0;
 }
 
 int heartbeat_init(heartbeat_context* hb,
@@ -38,9 +28,9 @@ int heartbeat_init(heartbeat_context* hb,
   hb->buffer_index = 0;
   hb->read_index = 0;
   hb->window_size = window_size;
-  init_time_data(&hb->td);
-  init_work_data(&hb->wd);
-  init_energy_data(&hb->ed);
+  init_udata(&hb->td);
+  init_udata(&hb->wd);
+  init_udata(&hb->ed);
   hb->window_buffer = window_buffer;
   // cheap way to set initial values to 0 (necessary for managing window data)
   memset(hb->window_buffer, 0, window_size * sizeof(heartbeat_record));
@@ -101,16 +91,16 @@ void heartbeat_pow(heartbeat_context* hb,
   int64_t delta_energy = end_energy - start_energy;
 
   // update total data
-  hb->td.total_time += delta_time;
-  hb->wd.total_work += work;
-  hb->ed.total_energy += delta_energy;
+  hb->td.global += delta_time;
+  hb->wd.global += work;
+  hb->ed.global += delta_energy;
 
   // now update the running window values
   // if we haven't yet reached window_size heartbeats, the log values are 0
   heartbeat_record* old_record = &hb->window_buffer[hb->buffer_index];
-  hb->td.window_time += delta_time - (old_record->end_time - old_record->start_time);
-  hb->wd.window_work += work - old_record->work;
-  hb->ed.window_energy += delta_energy - (old_record->end_energy - old_record->start_energy);
+  hb->td.window += delta_time - (old_record->end_time - old_record->start_time);
+  hb->wd.window += work - old_record->work;
+  hb->ed.window += delta_energy - (old_record->end_energy - old_record->start_energy);
 
   hb->counter++;
   hb->read_index = hb->buffer_index;
@@ -135,14 +125,14 @@ void heartbeat_pow(heartbeat_context* hb,
   } else {
     const double one_billion = 1000000000.0;
     const double one_million = 1000000.0;
-    double total_seconds = ((double) hb->td.total_time) / one_billion;
-    double window_seconds = ((double) hb->td.window_time) / one_billion;
+    double total_seconds = ((double) hb->td.global) / one_billion;
+    double window_seconds = ((double) hb->td.window) / one_billion;
     double instant_seconds = ((double) delta_time) / one_billion;
-    hb->window_buffer[index].global_perf = ((double) hb->wd.total_work) / total_seconds;
-    hb->window_buffer[index].window_perf = ((double) hb->wd.window_work) / window_seconds;
+    hb->window_buffer[index].global_perf = ((double) hb->wd.global) / total_seconds;
+    hb->window_buffer[index].window_perf = ((double) hb->wd.window) / window_seconds;
     hb->window_buffer[index].instant_perf = ((double) work) / instant_seconds;
-    hb->window_buffer[index].global_pwr = ((double) hb->ed.total_energy) / total_seconds / one_million;
-    hb->window_buffer[index].window_pwr = ((double) hb->ed.window_energy) / window_seconds / one_million;
+    hb->window_buffer[index].global_pwr = ((double) hb->ed.global) / total_seconds / one_million;
+    hb->window_buffer[index].window_pwr = ((double) hb->ed.window) / window_seconds / one_million;
     hb->window_buffer[index].instant_pwr = ((double) delta_energy) / instant_seconds / one_million;
   }
 

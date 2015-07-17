@@ -15,22 +15,12 @@ extern "C" {
 struct heartbeat_context;
 typedef struct heartbeat_context heartbeat_context;
 
-typedef struct {
-  uint64_t total_time;
-  uint64_t window_time;
-} heartbeat_time_data;
+typedef struct heartbeat_udata {
+  uint64_t global;
+  uint64_t window;
+} heartbeat_udata;
 
-typedef struct {
-  uint64_t total_work;
-  uint64_t window_work;
-} heartbeat_work_data;
-
-typedef struct {
-  uint64_t total_energy;
-  uint64_t window_energy;
-} heartbeat_energy_data;
-
-typedef struct {
+typedef struct heartbeat_record {
   uint64_t id;
   uint64_t user_tag;
 
@@ -61,9 +51,9 @@ struct heartbeat_context {
   heartbeat_window_complete* hwc_callback;
 
   // data
-  heartbeat_time_data td;
-  heartbeat_work_data wd;
-  heartbeat_energy_data ed;
+  heartbeat_udata td;
+  heartbeat_udata wd;
+  heartbeat_udata ed;
 };
 
 #ifdef __cplusplus
