@@ -1,13 +1,13 @@
 CXX = /usr/bin/gcc
 CXXFLAGS = -fPIC -Wall -Wno-unknown-pragmas -Iinc -O6
 DBG = -g
-DEFINES ?=
 LDFLAGS = -shared
 
 BINDIR = ./bin
 LIBDIR = ./lib
 INCDIR = ./inc
 SRCDIR = ./src
+EXADIR = ./example
 ROOTS = hb-pow-example
 BINS = $(ROOTS:%=$(BINDIR)/%)
 OBJS = $(ROOTS:%=$(BINDIR)/%.o)
@@ -20,8 +20,8 @@ $(BINDIR):
 $(LIBDIR):
 	-mkdir -p $(LIBDIR)
 
-$(BINDIR)/%.o : $(SRCDIR)/%.c
-	$(CXX) -c $(CXXFLAGS) $(DEFINES) $(DBG) -o $@ $<
+$(BINDIR)/%.o : $(EXADIR)/%.c
+	$(CXX) -c $(CXXFLAGS) $(DBG) -o $@ $<
 
 $(BINS) : $(OBJS)
 
@@ -43,4 +43,4 @@ uninstall:
 
 ## cleaning
 clean:
-	-rm -rf $(LIBDIR) $(BINDIR) *.log *~ $(SRCDIR)/*~
+	-rm -rf $(LIBDIR) $(BINDIR) *.log *~
