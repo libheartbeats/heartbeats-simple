@@ -2,6 +2,7 @@
  * Implementation of heartbeat-pow.h
  *
  * @author Connor Imes
+ * @date 2015-07-15
  */
 #include <stdio.h>
 #include <inttypes.h>
@@ -87,9 +88,11 @@ void heartbeat_pow(heartbeat_context* hb,
                    uint64_t end_time,
                    uint64_t start_energy,
                    uint64_t end_energy) {
-  // these could be < 0, but it's not actually harmful
+  // these could be <= 0, but it's not actually harmful
   int64_t delta_time = end_time - start_time;
   int64_t delta_energy = end_energy - start_energy;
+  const double one_billion = 1000000000.0;
+  const double one_million = 1000000.0;
 
   while (__sync_lock_test_and_set(&hb->lock, 1)) {
     while (hb->lock);
@@ -100,44 +103,34 @@ void heartbeat_pow(heartbeat_context* hb,
   hb->wd.global += work;
   hb->ed.global += delta_energy;
 
-  // now update the running window values
+  // update the sliding window values
   // if we haven't yet reached window_size heartbeats, the log values are 0
   heartbeat_record* old_record = &hb->window_buffer[hb->buffer_index];
   hb->td.window += delta_time - (old_record->end_time - old_record->start_time);
   hb->wd.window += work - old_record->work;
   hb->ed.window += delta_energy - (old_record->end_energy - old_record->start_energy);
 
-  hb->counter++;
+  double total_seconds = ((double) hb->td.global) / one_billion;
+  double window_seconds = ((double) hb->td.window) / one_billion;
+  double instant_seconds = ((double) delta_time) / one_billion;
 
-  // now store in log
-  hb->window_buffer[hb->buffer_index].id = hb->counter - 1;
+  // store in log
+  hb->window_buffer[hb->buffer_index].id = hb->counter;
   hb->window_buffer[hb->buffer_index].user_tag = user_tag;
   hb->window_buffer[hb->buffer_index].work = work;
   hb->window_buffer[hb->buffer_index].start_time = start_time;
   hb->window_buffer[hb->buffer_index].end_time = end_time;
   hb->window_buffer[hb->buffer_index].start_energy = start_energy;
   hb->window_buffer[hb->buffer_index].end_energy = end_energy;
-  if (delta_time == 0) {
-    hb->window_buffer[hb->buffer_index].global_perf = 0;
-    hb->window_buffer[hb->buffer_index].window_perf = 0;
-    hb->window_buffer[hb->buffer_index].instant_perf = 0;
-    hb->window_buffer[hb->buffer_index].global_pwr = 0;
-    hb->window_buffer[hb->buffer_index].window_pwr = 0;
-    hb->window_buffer[hb->buffer_index].instant_pwr = 0;
-  } else {
-    const double one_billion = 1000000000.0;
-    const double one_million = 1000000.0;
-    double total_seconds = ((double) hb->td.global) / one_billion;
-    double window_seconds = ((double) hb->td.window) / one_billion;
-    double instant_seconds = ((double) delta_time) / one_billion;
-    hb->window_buffer[hb->buffer_index].global_perf = ((double) hb->wd.global) / total_seconds;
-    hb->window_buffer[hb->buffer_index].window_perf = ((double) hb->wd.window) / window_seconds;
-    hb->window_buffer[hb->buffer_index].instant_perf = ((double) work) / instant_seconds;
-    hb->window_buffer[hb->buffer_index].global_pwr = ((double) hb->ed.global) / total_seconds / one_million;
-    hb->window_buffer[hb->buffer_index].window_pwr = ((double) hb->ed.window) / window_seconds / one_million;
-    hb->window_buffer[hb->buffer_index].instant_pwr = ((double) delta_energy) / instant_seconds / one_million;
-  }
+  hb->window_buffer[hb->buffer_index].global_perf = ((double) hb->wd.global) / total_seconds;
+  hb->window_buffer[hb->buffer_index].window_perf = ((double) hb->wd.window) / window_seconds;
+  hb->window_buffer[hb->buffer_index].instant_perf = ((double) work) / instant_seconds;
+  hb->window_buffer[hb->buffer_index].global_pwr = ((double) hb->ed.global) / total_seconds / one_million;
+  hb->window_buffer[hb->buffer_index].window_pwr = ((double) hb->ed.window) / window_seconds / one_million;
+  hb->window_buffer[hb->buffer_index].instant_pwr = ((double) delta_energy) / instant_seconds / one_million;
 
+  // update context state
+  hb->counter++;
   hb->read_index = hb->buffer_index;
   hb->buffer_index++;
   // check circular buffer, issue callback if full
