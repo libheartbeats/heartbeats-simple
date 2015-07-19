@@ -24,8 +24,7 @@ typedef struct heartbeat_acc_record {
   uint64_t end_time;
   heartbeat_rates perf;
 
-  uint64_t start_accuracy;
-  uint64_t end_accuracy;
+  uint64_t accuracy;
   heartbeat_rates acc;
 } heartbeat_acc_record;
 
@@ -74,8 +73,7 @@ void heartbeat_acc(heartbeat_acc_context* hb,
                    uint64_t work,
                    uint64_t start_time,
                    uint64_t end_time,
-                   uint64_t start_accuracy,
-                   uint64_t end_accuracy);
+                   uint64_t accuracy);
 
 /**
  * Logs the circular window buffer up to the current read index.

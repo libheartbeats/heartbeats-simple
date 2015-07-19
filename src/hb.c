@@ -106,7 +106,7 @@ int heartbeat_log_window_buffer(const heartbeat_context* hb,
               "HB    Tag"
               "    Work    Start_Time    End_time    Global_Perf    Window_Perf    Instant_Perf"
 #if defined(HEARTBEAT_USE_ACC)
-              "    Start_Accuracy    End_Accuracy    Global_Acc    Window_Acc    Instant_Acc"
+              "    Accuracy    Global_Acc    Window_Acc    Instant_Acc"
 #endif
 #if defined(HEARTBEAT_USE_POW)
               "    Start_Energy    End_Energy    Global_Pwr    Window_Pwr    Instant_Pwr"
@@ -118,7 +118,7 @@ int heartbeat_log_window_buffer(const heartbeat_context* hb,
               "%"PRIu64"    %"PRIu64
               "    %"PRIu64"    %"PRIu64"    %"PRIu64"    %f    %f    %f"
 #if defined(HEARTBEAT_USE_ACC)
-              "    %"PRIu64"    %"PRIu64"    %f    %f    %f"
+              "    %"PRIu64"    %f    %f    %f"
 #endif
 #if defined(HEARTBEAT_USE_POW)
               "    %"PRIu64"    %"PRIu64"    %f    %f    %f"
@@ -135,8 +135,7 @@ int heartbeat_log_window_buffer(const heartbeat_context* hb,
               hb->window_buffer[i].perf.window
 
 #if defined(HEARTBEAT_USE_ACC)
-              ,hb->window_buffer[i].start_accuracy,
-              hb->window_buffer[i].end_accuracy,
+              ,hb->window_buffer[i].accuracy,
               hb->window_buffer[i].acc.global,
               hb->window_buffer[i].acc.window,
               hb->window_buffer[i].acc.instant
@@ -165,8 +164,7 @@ void heartbeat_acc(heartbeat_acc_context* hb,
                    uint64_t work,
                    uint64_t start_time,
                    uint64_t end_time,
-                   uint64_t start_accuracy,
-                   uint64_t end_accuracy) {
+                   uint64_t accuracy) {
   heartbeat_acc_record* old_record;
 #elif defined(HEARTBEAT_MODE_POW)
 void heartbeat_pow(heartbeat_pow_context* hb,
@@ -183,8 +181,7 @@ void heartbeat_acc_pow(heartbeat_acc_pow_context* hb,
                        uint64_t work,
                        uint64_t start_time,
                        uint64_t end_time,
-                       uint64_t start_accuracy,
-                       uint64_t end_accuracy,
+                       uint64_t accuracy,
                        uint64_t start_energy,
                        uint64_t end_energy) {
   heartbeat_acc_pow_record* old_record;
@@ -224,14 +221,12 @@ void heartbeat(heartbeat_context* hb,
 
 #if defined(HEARTBEAT_USE_ACC)
   // accuracy
-  int64_t delta_accuracy = end_accuracy - start_accuracy;
-  hb->ad.global += delta_accuracy;
-  hb->ad.window += delta_accuracy - (old_record->end_accuracy - old_record->start_accuracy);
-  hb->window_buffer[hb->ws.buffer_index].start_accuracy = start_accuracy;
-  hb->window_buffer[hb->ws.buffer_index].end_accuracy = end_accuracy;
+  hb->ad.global += accuracy;
+  hb->ad.window += accuracy - old_record->accuracy;
+  hb->window_buffer[hb->ws.buffer_index].accuracy = accuracy;
   hb->window_buffer[hb->ws.buffer_index].acc.global = ((double) hb->ad.global) / total_seconds;
   hb->window_buffer[hb->ws.buffer_index].acc.window = ((double) hb->ad.window) / window_seconds;
-  hb->window_buffer[hb->ws.buffer_index].acc.instant = ((double) delta_accuracy) / instant_seconds;
+  hb->window_buffer[hb->ws.buffer_index].acc.instant = ((double) accuracy) / instant_seconds;
 #endif
 
 #if defined(HEARTBEAT_USE_POW)

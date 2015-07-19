@@ -24,8 +24,7 @@ typedef struct heartbeat_acc_pow_record {
   uint64_t end_time;
   heartbeat_rates perf;
 
-  uint64_t start_accuracy;
-  uint64_t end_accuracy;
+  uint64_t accuracy;
   heartbeat_rates acc;
 
   uint64_t start_energy;
@@ -81,8 +80,7 @@ void heartbeat_acc_pow(heartbeat_acc_pow_context* hb,
                        uint64_t work,
                        uint64_t start_time,
                        uint64_t end_time,
-                       uint64_t start_accuracy,
-                       uint64_t end_accuracy,
+                       uint64_t accuracy,
                        uint64_t start_energy,
                        uint64_t end_energy);
 
