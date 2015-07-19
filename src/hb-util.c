@@ -1,14 +1,8 @@
 /**
  * Functions defined in heartbeat header files that are reusable across
- * implementations due to common structure in heartbeat_t structs.
- *
- * To disable function definitions for a particular heartbeat interface and
- * implement them elsewhere, define the following macros as needed:
- *   HEARTBEAT_UTIL_OVERRIDE
- *   HEARTBEAT_POWER_UTIL_OVERRIDE
+ * implementations due to common structure in heartbeat structs.
  *
  * @author Connor Imes
- * @author Hank Hoffmann
  */
 
 #include <inttypes.h>
@@ -16,78 +10,118 @@
 /* Determine which heartbeat implementation to use */
 #if defined(HEARTBEAT_MODE_POW)
 #include "heartbeat-pow.h"
-#include "heartbeat-pow-types.h"
+#elif defined(HEARTBEAT_MODE_ACC)
+#include "heartbeat-acc.h"
+#elif defined(HEARTBEAT_MODE_ACC_POW)
+#include "heartbeat-acc-pow.h"
 #else
 #include "heartbeat.h"
-#include "heartbeat-types.h"
 #endif
 
-/*
- * Functions from heartbeat.h
- */
-#if !defined(HEARTBEAT_UTIL_OVERRIDE)
-
+#if defined(HEARTBEAT_MODE_ACC)
+uint64_t hb_acc_get_window_size(const heartbeat_acc_context* hb) {
+#elif defined(HEARTBEAT_MODE_POW)
+uint64_t hb_pow_get_window_size(const heartbeat_pow_context* hb) {
+#elif defined(HEARTBEAT_MODE_ACC_POW)
+uint64_t hb_acc_pow_get_window_size(const heartbeat_acc_pow_context* hb) {
+#else
 uint64_t hb_get_window_size(const heartbeat_context* hb) {
-  return hb->window_size;
+#endif
+  return hb->ws.window_size;
 }
 
+#if defined(HEARTBEAT_MODE_ACC)
+uint64_t hb_acc_get_user_tag(const heartbeat_acc_context* hb) {
+#elif defined(HEARTBEAT_MODE_POW)
+uint64_t hb_pow_get_user_tag(const heartbeat_pow_context* hb) {
+#elif defined(HEARTBEAT_MODE_ACC_POW)
+uint64_t hb_acc_pow_get_user_tag(const heartbeat_acc_pow_context* hb) {
+#else
 uint64_t hb_get_user_tag(const heartbeat_context* hb) {
-  return hb->window_buffer[hb->read_index].user_tag;
+#endif
+  return hb->window_buffer[hb->ws.read_index].user_tag;
 }
 
+#if defined(HEARTBEAT_MODE_ACC)
+uint64_t hb_acc_get_global_time(const heartbeat_acc_context* hb) {
+#elif defined(HEARTBEAT_MODE_POW)
+uint64_t hb_pow_get_global_time(const heartbeat_pow_context* hb) {
+#elif defined(HEARTBEAT_MODE_ACC_POW)
+uint64_t hb_acc_pow_get_global_time(const heartbeat_acc_pow_context* hb) {
+#else
 uint64_t hb_get_global_time(const heartbeat_context* hb) {
+#endif
   return hb->td.global;
 }
 
+#if defined(HEARTBEAT_MODE_ACC)
+uint64_t hb_acc_get_window_time(const heartbeat_acc_context* hb) {
+#elif defined(HEARTBEAT_MODE_POW)
+uint64_t hb_pow_get_window_time(const heartbeat_pow_context* hb) {
+#elif defined(HEARTBEAT_MODE_ACC_POW)
+uint64_t hb_acc_pow_get_window_time(const heartbeat_acc_pow_context* hb) {
+#else
 uint64_t hb_get_window_time(const heartbeat_context* hb) {
+#endif
   return hb->td.window;
 }
 
+#if defined(HEARTBEAT_MODE_ACC)
+uint64_t hb_acc_get_global_work(const heartbeat_acc_context* hb) {
+#elif defined(HEARTBEAT_MODE_POW)
+uint64_t hb_pow_get_global_work(const heartbeat_pow_context* hb) {
+#elif defined(HEARTBEAT_MODE_ACC_POW)
+uint64_t hb_acc_pow_get_global_work(const heartbeat_acc_pow_context* hb) {
+#else
 uint64_t hb_get_global_work(const heartbeat_context* hb) {
+#endif
   return hb->wd.global;
 }
 
+#if defined(HEARTBEAT_MODE_ACC)
+uint64_t hb_acc_get_window_work(const heartbeat_acc_context* hb) {
+#elif defined(HEARTBEAT_MODE_POW)
+uint64_t hb_pow_get_window_work(const heartbeat_pow_context* hb) {
+#elif defined(HEARTBEAT_MODE_ACC_POW)
+uint64_t hb_acc_pow_get_window_work(const heartbeat_acc_pow_context* hb) {
+#else
 uint64_t hb_get_window_work(const heartbeat_context* hb) {
+#endif
   return hb->wd.window;
 }
 
-double hb_get_global_rate(const heartbeat_context* hb) {
-  return hb->window_buffer[hb->read_index].global_perf;
-}
-
-double hb_get_window_rate(const heartbeat_context* hb) {
-  return hb->window_buffer[hb->read_index].window_perf;
-}
-
-double hb_get_instant_rate(const heartbeat_context* hb) {
-  return hb->window_buffer[hb->read_index].instant_perf;
-}
-
+#if defined(HEARTBEAT_MODE_ACC)
+double hb_acc_get_global_perf(const heartbeat_acc_context* hb) {
+#elif defined(HEARTBEAT_MODE_POW)
+double hb_pow_get_global_perf(const heartbeat_pow_context* hb) {
+#elif defined(HEARTBEAT_MODE_ACC_POW)
+double hb_acc_pow_get_global_perf(const heartbeat_acc_pow_context* hb) {
+#else
+double hb_get_global_perf(const heartbeat_context* hb) {
 #endif
-
-/*
- * Functions from heartbeat-pow.h
- */
-#if defined(HEARTBEAT_MODE_POW) && !defined(HEARTBEAT_POWER_UTIL_OVERRIDE)
-
-uint64_t hb_get_global_energy(const heartbeat_context* hb) {
-  return hb->ed.global;
+  return hb->window_buffer[hb->ws.read_index].perf.global;
 }
 
-uint64_t hb_get_window_energy(const heartbeat_context* hb) {
-  return hb->ed.window;
-}
-
-double hb_get_global_power(const heartbeat_context* hb) {
-  return hb->window_buffer[hb->read_index].global_pwr;
-}
-
-double hb_get_window_power(const heartbeat_context* hb) {
-  return hb->window_buffer[hb->read_index].window_pwr;
-}
-
-double hb_get_instant_power(const heartbeat_context* hb) {
-  return hb->window_buffer[hb->read_index].instant_pwr;
-}
-
+#if defined(HEARTBEAT_MODE_ACC)
+double hb_acc_get_window_perf(const heartbeat_acc_context* hb) {
+#elif defined(HEARTBEAT_MODE_POW)
+double hb_pow_get_window_perf(const heartbeat_pow_context* hb) {
+#elif defined(HEARTBEAT_MODE_ACC_POW)
+double hb_acc_pow_get_window_perf(const heartbeat_acc_pow_context* hb) {
+#else
+double hb_get_window_perf(const heartbeat_context* hb) {
 #endif
+  return hb->window_buffer[hb->ws.read_index].perf.window;
+}
+
+#if defined(HEARTBEAT_MODE_ACC)
+double hb_acc_get_instant_perf(const heartbeat_acc_context* hb) {
+#elif defined(HEARTBEAT_MODE_POW)
+double hb_pow_get_instant_perf(const heartbeat_pow_context* hb) {
+#elif defined(HEARTBEAT_MODE_ACC_POW)
+double hb_acc_pow_get_instant_perf(const heartbeat_acc_pow_context* hb) {
+#else
+double hb_get_instant_perf(const heartbeat_context* hb) {
+#endif
+  return hb->window_buffer[hb->ws.read_index].perf.instant;
+}

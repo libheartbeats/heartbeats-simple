@@ -12,7 +12,7 @@ ROOTS = hb-pow-example
 BINS = $(ROOTS:%=$(BINDIR)/%)
 OBJS = $(ROOTS:%=$(BINDIR)/%.o)
 
-all: $(BINDIR) $(LIBDIR) $(LIBDIR)/libhbs-pow.so $(BINS)
+all: $(BINDIR) $(LIBDIR) $(LIBDIR)/libhbs.so $(LIBDIR)/libhbs-acc.so $(LIBDIR)/libhbs-pow.so $(LIBDIR)/libhbs-acc-pow.so $(BINS)
 
 $(BINDIR):
 	-mkdir -p $(BINDIR)
@@ -28,8 +28,17 @@ $(BINS) : $(OBJS)
 $(BINS) : % : %.o
 	$(CXX) $(CXXFLAGS) -o $@ $< -Llib -lhbs-pow
 
-$(LIBDIR)/libhbs-pow.so: $(SRCDIR)/hb-pow.c $(SRCDIR)/hb-util.c
-	$(CXX) $(CXXFLAGS) -DHEARTBEAT_MODE_POW $(LDFLAGS) -Wl,-soname,$(@F) -o $@ $^
+$(LIBDIR)/libhbs.so: $(SRCDIR)/hb.c $(SRCDIR)/hb-util.c $(SRCDIR)/hb-pow-util.c
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -Wl,-soname,$(@F) -o $@ $^
+
+$(LIBDIR)/libhbs-acc.so: $(SRCDIR)/hb.c $(SRCDIR)/hb-util.c $(SRCDIR)/hb-acc-util.c
+	$(CXX) $(CXXFLAGS) -DHEARTBEAT_MODE_ACC -DHEARTBEAT_USE_ACC $(LDFLAGS) -Wl,-soname,$(@F) -o $@ $^
+
+$(LIBDIR)/libhbs-pow.so: $(SRCDIR)/hb.c $(SRCDIR)/hb-util.c $(SRCDIR)/hb-pow-util.c
+	$(CXX) $(CXXFLAGS) -DHEARTBEAT_MODE_POW -DHEARTBEAT_USE_POW $(LDFLAGS) -Wl,-soname,$(@F) -o $@ $^
+
+$(LIBDIR)/libhbs-acc-pow.so: $(SRCDIR)/hb.c $(SRCDIR)/hb-util.c $(SRCDIR)/hb-acc-util.c $(SRCDIR)/hb-pow-util.c
+	$(CXX) $(CXXFLAGS) -DHEARTBEAT_MODE_ACC_POW -DHEARTBEAT_USE_ACC -DHEARTBEAT_USE_POW $(LDFLAGS) -Wl,-soname,$(@F) -o $@ $^
 
 # Installation
 install: all

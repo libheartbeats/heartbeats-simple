@@ -10,7 +10,33 @@
 extern "C" {
 #endif
 
-#include "heartbeat-types.h"
+#include "heartbeat-common-types.h"
+
+struct heartbeat_context;
+
+typedef struct heartbeat_record {
+  uint64_t id;
+  uint64_t user_tag;
+
+  uint64_t work;
+  uint64_t start_time;
+  uint64_t end_time;
+  heartbeat_rates perf;
+} heartbeat_record;
+
+typedef void (heartbeat_window_complete) (const struct heartbeat_context* hb);
+
+typedef struct heartbeat_context {
+  heartbeat_window_state ws;
+  heartbeat_record* window_buffer;
+  uint64_t counter;
+  volatile int lock;
+  heartbeat_window_complete* hwc_callback;
+
+  // data
+  heartbeat_udata td;
+  heartbeat_udata wd;
+} heartbeat_context;
 
 /**
  * Initialize a heartbeats instance.
@@ -101,50 +127,29 @@ uint64_t hb_get_global_work(const heartbeat_context* hb);
 uint64_t hb_get_window_work(const heartbeat_context* hb);
 
 /**
- * Returns the heart rate over the life of the entire application
+ * Returns the performance over the life of the entire application
  *
  * @param hb pointer to heartbeat_t
- * @return the heart rate (double) over the entire life of the application
+ * @return the performance (double) over the entire life of the application
  */
-double hb_get_global_rate(const heartbeat_context* hb);
+double hb_get_global_perf(const heartbeat_context* hb);
 
 /**
- * Returns the heart rate over the last window (as specified to init)
+ * Returns the performance over the last window (as specified to init)
  * heartbeats
  *
  * @param hb pointer to heartbeat_t
- * @return the heart rate (double) over the last window
+ * @return the performance (double) over the last window
  */
-double hb_get_window_rate(const heartbeat_context* hb);
+double hb_get_window_perf(const heartbeat_context* hb);
 
 /**
- * Returns the heart rate for the last heartbeat.
+ * Returns the performance for the last heartbeat.
  *
  * @param hb pointer to heartbeat_t
- * @return the heart rate (double) for the last heartbeat
+ * @return the performance (double) for the last heartbeat
  */
-double hb_get_instant_rate(const heartbeat_context* hb);
-
-/**
- * Returns the record for the current heartbeat
- * currently may read old data
- *
- * @param hb pointer to heartbeat_t
- * @param record pointer to record to fill
- */
-void hb_get_current(const heartbeat_context* hb,
-                    heartbeat_record* record);
-
-/**
- * Returns all heartbeat information for the last n heartbeats
- *
- * @param hb pointer to heartbeat_t
- * @param record pointer to heartbeat_record_t
- * @param n uint64_t
- */
-uint64_t hb_get_history(const heartbeat_context* hb,
-                        heartbeat_record* record,
-                        uint64_t n);
+double hb_get_instant_perf(const heartbeat_context* hb);
 
 #ifdef __cplusplus
  }
