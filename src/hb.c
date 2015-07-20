@@ -46,10 +46,10 @@ int heartbeat_acc_pow_init(heartbeat_acc_pow_context* hb,
                            heartbeat_acc_pow_window_complete* hwc_callback) {
   size_t record_size = sizeof(heartbeat_acc_pow_record);
 #else
-int heartbeat_pow_init(heartbeat_context* hb,
-                       uint64_t window_size,
-                       heartbeat_record* window_buffer,
-                       heartbeat_window_complete* hwc_callback) {
+int heartbeat_init(heartbeat_context* hb,
+                   uint64_t window_size,
+                   heartbeat_record* window_buffer,
+                   heartbeat_window_complete* hwc_callback) {
   size_t record_size = sizeof(heartbeat_record);
 #endif
   if (hb == NULL || window_buffer == NULL || window_size == 0) {

@@ -103,7 +103,7 @@ int heartbeat_acc_pow_log_window_buffer(const heartbeat_acc_pow_context* hb,
  * @param hb pointer to heartbeat_t
  * @return the size of the sliding window (uint64_t)
  */
-uint64_t hb_pow_get_window_size(const heartbeat_acc_pow_context* hb);
+uint64_t hb_acc_pow_get_window_size(const heartbeat_acc_pow_context* hb);
 
 /**
  * Returns the current user tag
@@ -111,7 +111,7 @@ uint64_t hb_pow_get_window_size(const heartbeat_acc_pow_context* hb);
  * @param hb pointer to heartbeat_t
  * @return the current user tag (uint64_t)
  */
-uint64_t hb_pow_get_user_tag(const heartbeat_acc_pow_context* hb);
+uint64_t hb_acc_pow_get_user_tag(const heartbeat_acc_pow_context* hb);
 
 /**
  * Get the total time for the life of this heartbeat.
@@ -119,7 +119,7 @@ uint64_t hb_pow_get_user_tag(const heartbeat_acc_pow_context* hb);
  * @param hb pointer to heartbeat_t
  * @return the total time (uint64_t)
  */
-uint64_t hb_pow_get_global_time(const heartbeat_acc_pow_context* hb);
+uint64_t hb_acc_pow_get_global_time(const heartbeat_acc_pow_context* hb);
 
 /**
  * Get the current window time for this heartbeat.
@@ -127,7 +127,7 @@ uint64_t hb_pow_get_global_time(const heartbeat_acc_pow_context* hb);
  * @param hb pointer to heartbeat_t
  * @return the window time (uint64_t)
  */
-uint64_t hb_pow_get_window_time(const heartbeat_acc_pow_context* hb);
+uint64_t hb_acc_pow_get_window_time(const heartbeat_acc_pow_context* hb);
 
 /**
  * Get the total work for the life of this heartbeat.
@@ -135,7 +135,7 @@ uint64_t hb_pow_get_window_time(const heartbeat_acc_pow_context* hb);
  * @param hb pointer to heartbeat_t
  * @return the total work (uint64_t)
  */
-uint64_t hb_pow_get_global_work(const heartbeat_acc_pow_context* hb);
+uint64_t hb_acc_pow_get_global_work(const heartbeat_acc_pow_context* hb);
 
 /**
  * Get the current window work for this heartbeat.
@@ -143,7 +143,7 @@ uint64_t hb_pow_get_global_work(const heartbeat_acc_pow_context* hb);
  * @param hb pointer to heartbeat_t
  * @return the window work (uint64_t)
  */
-uint64_t hb_pow_get_window_work(const heartbeat_acc_pow_context* hb);
+uint64_t hb_acc_pow_get_window_work(const heartbeat_acc_pow_context* hb);
 
 /**
  * Returns the performance over the life of the entire application
@@ -151,7 +151,7 @@ uint64_t hb_pow_get_window_work(const heartbeat_acc_pow_context* hb);
  * @param hb pointer to heartbeat_t
  * @return the performance (double) over the entire life of the application
  */
-double hb_pow_get_global_perf(const heartbeat_acc_pow_context* hb);
+double hb_acc_pow_get_global_perf(const heartbeat_acc_pow_context* hb);
 
 /**
  * Returns the performance over the last window (as specified to init)
@@ -160,7 +160,7 @@ double hb_pow_get_global_perf(const heartbeat_acc_pow_context* hb);
  * @param hb pointer to heartbeat_t
  * @return the performance (double) over the last window
  */
-double hb_pow_get_window_perf(const heartbeat_acc_pow_context* hb);
+double hb_acc_pow_get_window_perf(const heartbeat_acc_pow_context* hb);
 
 /**
  * Returns the performance for the last heartbeat.
@@ -168,7 +168,7 @@ double hb_pow_get_window_perf(const heartbeat_acc_pow_context* hb);
  * @param hb pointer to heartbeat_t
  * @return the performance (double) for the last heartbeat
  */
-double hb_pow_get_instant_perf(const heartbeat_acc_pow_context* hb);
+double hb_acc_pow_get_instant_perf(const heartbeat_acc_pow_context* hb);
 
 /**
  * Get the total accuracy for the life of this heartbeat.
@@ -217,7 +217,7 @@ double hb_acc_pow_get_instant_accuracy_rate(const heartbeat_acc_pow_context* hb)
  * @param hb pointer to heartbeat_t
  * @return the total energy (uint64_t)
  */
-uint64_t hb_pow_get_global_energy(const heartbeat_acc_pow_context* hb);
+uint64_t hb_acc_pow_get_global_energy(const heartbeat_acc_pow_context* hb);
 
 /**
  * Get the current window energy for this heartbeat.
@@ -225,7 +225,7 @@ uint64_t hb_pow_get_global_energy(const heartbeat_acc_pow_context* hb);
  * @param hb pointer to heartbeat_t
  * @return the window energy (uint64_t)
  */
-uint64_t hb_pow_get_window_energy(const heartbeat_acc_pow_context* hb);
+uint64_t hb_acc_pow_get_window_energy(const heartbeat_acc_pow_context* hb);
 
 /**
  * Returns the power over the life of the entire application
@@ -233,7 +233,7 @@ uint64_t hb_pow_get_window_energy(const heartbeat_acc_pow_context* hb);
  * @param hb pointer to heartbeat_t
  * @return the power (double) over the entire life of the application
  */
-double hb_pow_get_global_power(const heartbeat_acc_pow_context* hb);
+double hb_acc_pow_get_global_power(const heartbeat_acc_pow_context* hb);
 
 /**
  * Returns the power over the last window (as specified to init)
@@ -242,7 +242,7 @@ double hb_pow_get_global_power(const heartbeat_acc_pow_context* hb);
  * @param hb pointer to heartbeat_t
  * @return the power (double) over the last window
  */
-double hb_pow_get_window_power(const heartbeat_acc_pow_context* hb);
+double hb_acc_pow_get_window_power(const heartbeat_acc_pow_context* hb);
 
 /**
  * Returns the power for the last heartbeat.
@@ -250,7 +250,7 @@ double hb_pow_get_window_power(const heartbeat_acc_pow_context* hb);
  * @param hb pointer to heartbeat_t
  * @return the power (double) for the last heartbeat
  */
-double hb_pow_get_instant_power(const heartbeat_acc_pow_context* hb);
+double hb_acc_pow_get_instant_power(const heartbeat_acc_pow_context* hb);
 
 #ifdef __cplusplus
 }
