@@ -104,46 +104,66 @@ int heartbeat_log_window_buffer(const heartbeat_context* hb,
     if (print_header) {
       fprintf(log,
               "HB    Tag"
-              "    Work    Start_Time    End_time    Global_Perf    Window_Perf    Instant_Perf"
+              "    Global_Work    Window_Work    Work"
+              "    Global_Time    Window_Time    Start_Time    End_Time"
+              "    Global_Perf    Window_Perf    Instant_Perf"
 #if defined(HEARTBEAT_USE_ACC)
-              "    Accuracy    Global_Acc    Window_Acc    Instant_Acc"
+              "    Global_Accuracy    Window_Accuracy    Accuracy"
+              "    Global_Acc_Rate    Window_Acc_Rate    Instant_Acc_Rate"
 #endif
 #if defined(HEARTBEAT_USE_POW)
-              "    Start_Energy    End_Energy    Global_Pwr    Window_Pwr    Instant_Pwr"
+              "    Global_Energy    Window_Energy    Start_Energy    End_Energy"
+              "    Global_Pwr    Window_Pwr    Instant_Pwr"
 #endif
               "\n");
     }
     for (i = 0; i < hb->ws.buffer_index; i++) {
       fprintf(log,
               "%"PRIu64"    %"PRIu64
-              "    %"PRIu64"    %"PRIu64"    %"PRIu64"    %f    %f    %f"
+              "    %"PRIu64"    %"PRIu64"    %"PRIu64
+              "    %"PRIu64"    %"PRIu64"    %"PRIu64"    %"PRIu64
+              "    %f    %f    %f"
 #if defined(HEARTBEAT_USE_ACC)
-              "    %"PRIu64"    %f    %f    %f"
+              "    %"PRIu64"    %"PRIu64"    %"PRIu64
+              "    %f    %f    %f"
 #endif
 #if defined(HEARTBEAT_USE_POW)
-              "    %"PRIu64"    %"PRIu64"    %f    %f    %f"
+              "    %"PRIu64"    %"PRIu64"    %"PRIu64"    %"PRIu64
+              "    %f    %f    %f"
 #endif
               "\n",
               hb->window_buffer[i].id,
               hb->window_buffer[i].user_tag,
 
+              hb->window_buffer[i].wd.global,
+              hb->window_buffer[i].wd.window,
               hb->window_buffer[i].work,
+
+              hb->window_buffer[i].td.global,
+              hb->window_buffer[i].td.window,
               hb->window_buffer[i].start_time,
               hb->window_buffer[i].end_time,
+
               hb->window_buffer[i].perf.global,
               hb->window_buffer[i].perf.window,
               hb->window_buffer[i].perf.window
 
 #if defined(HEARTBEAT_USE_ACC)
-              ,hb->window_buffer[i].accuracy,
+              ,hb->window_buffer[i].ad.global,
+              hb->window_buffer[i].ad.window,
+              hb->window_buffer[i].accuracy,
+
               hb->window_buffer[i].acc.global,
               hb->window_buffer[i].acc.window,
               hb->window_buffer[i].acc.instant
 #endif
 
 #if defined(HEARTBEAT_USE_POW)
-              ,hb->window_buffer[i].start_energy,
+              ,hb->window_buffer[i].ed.global,
+              hb->window_buffer[i].ed.window,
+              hb->window_buffer[i].start_energy,
               hb->window_buffer[i].end_energy,
+
               hb->window_buffer[i].pwr.global,
               hb->window_buffer[i].pwr.window,
               hb->window_buffer[i].pwr.instant
@@ -210,8 +230,10 @@ void heartbeat(heartbeat_context* hb,
   hb->wd.global += work;
   hb->wd.window += work - old_record->work;
   hb->window_buffer[hb->ws.buffer_index].work = work;
+  memcpy(&hb->window_buffer[hb->ws.buffer_index].wd, &hb->wd, sizeof(heartbeat_udata));
   hb->window_buffer[hb->ws.buffer_index].start_time = start_time;
   hb->window_buffer[hb->ws.buffer_index].end_time = end_time;
+  memcpy(&hb->window_buffer[hb->ws.buffer_index].td, &hb->td, sizeof(heartbeat_udata));
   double total_seconds = ((double) hb->td.global) / ONE_BILLION;
   double window_seconds = ((double) hb->td.window) / ONE_BILLION;
   double instant_seconds = ((double) delta_time) / ONE_BILLION;
@@ -224,6 +246,7 @@ void heartbeat(heartbeat_context* hb,
   hb->ad.global += accuracy;
   hb->ad.window += accuracy - old_record->accuracy;
   hb->window_buffer[hb->ws.buffer_index].accuracy = accuracy;
+  memcpy(&hb->window_buffer[hb->ws.buffer_index].ad, &hb->ad, sizeof(heartbeat_udata));
   hb->window_buffer[hb->ws.buffer_index].acc.global = ((double) hb->ad.global) / total_seconds;
   hb->window_buffer[hb->ws.buffer_index].acc.window = ((double) hb->ad.window) / window_seconds;
   hb->window_buffer[hb->ws.buffer_index].acc.instant = ((double) accuracy) / instant_seconds;
@@ -236,6 +259,7 @@ void heartbeat(heartbeat_context* hb,
   hb->ed.window += delta_energy - (old_record->end_energy - old_record->start_energy);
   hb->window_buffer[hb->ws.buffer_index].start_energy = start_energy;
   hb->window_buffer[hb->ws.buffer_index].end_energy = end_energy;
+  memcpy(&hb->window_buffer[hb->ws.buffer_index].ed, &hb->ed, sizeof(heartbeat_udata));
   hb->window_buffer[hb->ws.buffer_index].pwr.global = ((double) hb->ed.global) / total_seconds / ONE_MILLION;
   hb->window_buffer[hb->ws.buffer_index].pwr.window = ((double) hb->ed.window) / window_seconds / ONE_MILLION;
   hb->window_buffer[hb->ws.buffer_index].pwr.instant = ((double) delta_energy) / instant_seconds / ONE_MILLION;

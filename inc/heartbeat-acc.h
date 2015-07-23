@@ -20,11 +20,14 @@ typedef struct heartbeat_acc_record {
   uint64_t user_tag;
 
   uint64_t work;
+  heartbeat_udata wd;
   uint64_t start_time;
   uint64_t end_time;
+  heartbeat_udata td;
   heartbeat_rates perf;
 
   uint64_t accuracy;
+  heartbeat_udata ad;
   heartbeat_rates acc;
 } heartbeat_acc_record;
 
