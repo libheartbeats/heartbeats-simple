@@ -103,35 +103,36 @@ int heartbeat_log_window_buffer(const heartbeat_context* hb,
   } else {
     if (print_header) {
       fprintf(log,
-              "HB    Tag"
-              "    Global_Work    Window_Work    Work"
-              "    Global_Time    Window_Time    Start_Time    End_Time"
-              "    Global_Perf    Window_Perf    Instant_Perf"
+              "%-6s %-6s"
+              " %-11s %-11s %-11s"
+              " %-15s %-15s %-20s %-20s"
+              " %-15s %-15s %-15s",
+              "HB", "Tag",
+              "Global_Work", "Window_Work", "Work",
+              "Global_Time", "Window_Time", "Start_Time", "End_Time",
+              "Global_Perf", "Window_Perf", "Instant_Perf");
 #if defined(HEARTBEAT_USE_ACC)
-              "    Global_Accuracy    Window_Accuracy    Accuracy"
-              "    Global_Acc_Rate    Window_Acc_Rate    Instant_Acc_Rate"
+      fprintf(log,
+              " %-11s %-11s %-11s"
+              " %-16s %-16s %-16s",
+              "Global_Acc", "Window_Acc", "Acc",
+              "Global_Acc_Rate", "Window_Acc_Rate", "Instant_Acc_Rate");
 #endif
 #if defined(HEARTBEAT_USE_POW)
-              "    Global_Energy    Window_Energy    Start_Energy    End_Energy"
-              "    Global_Pwr    Window_Pwr    Instant_Pwr"
+      fprintf(log,
+              " %-15s %-15s %-15s %-15s"
+              " %-15s %-15s %-15s",
+              "Global_Energy", "Window_Energy", "Start_Energy", "End_Energy",
+              "Global_Pwr", "Window_Pwr", "Instant_Pwr");
 #endif
-              "\n");
+              fprintf(log, "\n");
     }
     for (i = 0; i < hb->ws.buffer_index; i++) {
       fprintf(log,
-              "%"PRIu64"    %"PRIu64
-              "    %"PRIu64"    %"PRIu64"    %"PRIu64
-              "    %"PRIu64"    %"PRIu64"    %"PRIu64"    %"PRIu64
-              "    %f    %f    %f"
-#if defined(HEARTBEAT_USE_ACC)
-              "    %"PRIu64"    %"PRIu64"    %"PRIu64
-              "    %f    %f    %f"
-#endif
-#if defined(HEARTBEAT_USE_POW)
-              "    %"PRIu64"    %"PRIu64"    %"PRIu64"    %"PRIu64
-              "    %f    %f    %f"
-#endif
-              "\n",
+              "%-6"PRIu64" %-6"PRIu64
+              " %-11"PRIu64" %-11"PRIu64" %-11"PRIu64
+              " %-15"PRIu64" %-15"PRIu64" %-20"PRIu64" %-20"PRIu64
+              " %-15.6f %-15.6f %-15.6f",
               hb->window_buffer[i].id,
               hb->window_buffer[i].user_tag,
 
@@ -146,29 +147,33 @@ int heartbeat_log_window_buffer(const heartbeat_context* hb,
 
               hb->window_buffer[i].perf.global,
               hb->window_buffer[i].perf.window,
-              hb->window_buffer[i].perf.window
-
+              hb->window_buffer[i].perf.window);
 #if defined(HEARTBEAT_USE_ACC)
-              ,hb->window_buffer[i].ad.global,
+      fprintf(log,
+              " %-11"PRIu64" %-11"PRIu64" %-11"PRIu64
+              " %-16.6f %-16.6f %-16.6f",
+              hb->window_buffer[i].ad.global,
               hb->window_buffer[i].ad.window,
               hb->window_buffer[i].accuracy,
 
               hb->window_buffer[i].acc.global,
               hb->window_buffer[i].acc.window,
-              hb->window_buffer[i].acc.instant
+              hb->window_buffer[i].acc.instant);
 #endif
-
 #if defined(HEARTBEAT_USE_POW)
-              ,hb->window_buffer[i].ed.global,
+      fprintf(log,
+              " %-15"PRIu64" %-15"PRIu64" %-15"PRIu64" %-15"PRIu64
+              " %-15.6f %-15.6f %-15.6f",
+              hb->window_buffer[i].ed.global,
               hb->window_buffer[i].ed.window,
               hb->window_buffer[i].start_energy,
               hb->window_buffer[i].end_energy,
 
               hb->window_buffer[i].pwr.global,
               hb->window_buffer[i].pwr.window,
-              hb->window_buffer[i].pwr.instant
+              hb->window_buffer[i].pwr.instant);
 #endif
-        );
+      fprintf(log,"\n");
     }
     ret = fflush(log);
   }
