@@ -70,14 +70,21 @@ void heartbeat(heartbeat_context* hb,
                uint64_t end_time);
 
 /**
+ * Write the header text to a log file.
+ *
+ * @param fd
+ * @return 0 on success, error code otherwise
+ */
+int hb_log_header(int fd);
+
+/**
  * Logs the circular window buffer up to the current read index.
  *
  * @param hb
  * @param fd
- * @param print_header
  * @return 0 on success, error code otherwise
  */
-int heartbeat_log_window_buffer(const heartbeat_context* hb, int fd, int print_header);
+int hb_log_window_buffer(const heartbeat_context* hb, int fd);
 
 /**
  * Returns the size of the sliding window used to compute the current heart

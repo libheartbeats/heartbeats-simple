@@ -81,16 +81,21 @@ void heartbeat_pow(heartbeat_pow_context* hb,
                    uint64_t end_energy);
 
 /**
+ * Write the header text to a log file.
+ *
+ * @param fd
+ * @return 0 on success, error code otherwise
+ */
+int hb_pow_log_header(int fd);
+
+/**
  * Logs the circular window buffer up to the current read index.
  *
  * @param hb
  * @param fd
- * @param print_header
  * @return 0 on success, error code otherwise
  */
-int heartbeat_pow_log_window_buffer(const heartbeat_pow_context* hb,
-                                    int fd,
-                                    int print_header);
+int hb_pow_log_window_buffer(const heartbeat_pow_context* hb, int fd);
 
 /**
  * Returns the size of the sliding window used to compute the current heart

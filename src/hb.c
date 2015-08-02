@@ -78,21 +78,61 @@ int heartbeat_init(heartbeat_context* hb,
 }
 
 #if defined(HEARTBEAT_MODE_ACC)
-int heartbeat_acc_log_window_buffer(const heartbeat_acc_context* hb,
-                                    int fd,
-                                    int print_header) {
+int hb_acc_log_header(int fd) {
 #elif defined(HEARTBEAT_MODE_POW)
-int heartbeat_pow_log_window_buffer(const heartbeat_pow_context* hb,
-                                    int fd,
-                                    int print_header) {
+int hb_pow_log_header(int fd) {
 #elif defined(HEARTBEAT_MODE_ACC_POW)
-int heartbeat_acc_pow_log_window_buffer(const heartbeat_acc_pow_context* hb,
-                                        int fd,
-                                        int print_header) {
+int hb_acc_pow_log_header(int fd) {
 #else
-int heartbeat_log_window_buffer(const heartbeat_context* hb,
-                                int fd,
-                                int print_header) {
+int hb_log_header(int fd) {
+#endif
+  int ret;
+  FILE* log = fdopen(fd, "w");
+  if (log == NULL) {
+    perror("Failed to open log file for writing");
+    ret = 1;
+  } else {
+    fprintf(log,
+            "%-6s %-6s"
+            " %-11s %-11s %-11s"
+            " %-15s %-15s %-20s %-20s"
+            " %-15s %-15s %-15s",
+            "HB", "Tag",
+            "Global_Work", "Window_Work", "Work",
+            "Global_Time", "Window_Time", "Start_Time", "End_Time",
+            "Global_Perf", "Window_Perf", "Instant_Perf");
+#if defined(HEARTBEAT_USE_ACC)
+    fprintf(log,
+            " %-11s %-11s %-11s"
+            " %-16s %-16s %-16s",
+            "Global_Acc", "Window_Acc", "Acc",
+            "Global_Acc_Rate", "Window_Acc_Rate", "Instant_Acc_Rate");
+#endif
+#if defined(HEARTBEAT_USE_POW)
+    fprintf(log,
+            " %-15s %-15s %-15s %-15s"
+            " %-15s %-15s %-15s",
+            "Global_Energy", "Window_Energy", "Start_Energy", "End_Energy",
+            "Global_Pwr", "Window_Pwr", "Instant_Pwr");
+#endif
+    fprintf(log, "\n");
+    ret = fflush(log);
+  }
+  return ret;
+}
+
+#if defined(HEARTBEAT_MODE_ACC)
+int hb_acc_log_window_buffer(const heartbeat_acc_context* hb,
+                             int fd) {
+#elif defined(HEARTBEAT_MODE_POW)
+int hb_pow_log_window_buffer(const heartbeat_pow_context* hb,
+                             int fd) {
+#elif defined(HEARTBEAT_MODE_ACC_POW)
+int hb_acc_pow_log_window_buffer(const heartbeat_acc_pow_context* hb,
+                                 int fd) {
+#else
+int hb_log_window_buffer(const heartbeat_context* hb,
+                         int fd) {
 #endif
   int ret;
   uint64_t i;
@@ -101,32 +141,6 @@ int heartbeat_log_window_buffer(const heartbeat_context* hb,
     perror("Failed to open log file for writing");
     ret = 1;
   } else {
-    if (print_header) {
-      fprintf(log,
-              "%-6s %-6s"
-              " %-11s %-11s %-11s"
-              " %-15s %-15s %-20s %-20s"
-              " %-15s %-15s %-15s",
-              "HB", "Tag",
-              "Global_Work", "Window_Work", "Work",
-              "Global_Time", "Window_Time", "Start_Time", "End_Time",
-              "Global_Perf", "Window_Perf", "Instant_Perf");
-#if defined(HEARTBEAT_USE_ACC)
-      fprintf(log,
-              " %-11s %-11s %-11s"
-              " %-16s %-16s %-16s",
-              "Global_Acc", "Window_Acc", "Acc",
-              "Global_Acc_Rate", "Window_Acc_Rate", "Instant_Acc_Rate");
-#endif
-#if defined(HEARTBEAT_USE_POW)
-      fprintf(log,
-              " %-15s %-15s %-15s %-15s"
-              " %-15s %-15s %-15s",
-              "Global_Energy", "Window_Energy", "Start_Energy", "End_Energy",
-              "Global_Pwr", "Window_Pwr", "Instant_Pwr");
-#endif
-              fprintf(log, "\n");
-    }
     for (i = 0; i < hb->ws.buffer_index; i++) {
       fprintf(log,
               "%-6"PRIu64" %-6"PRIu64

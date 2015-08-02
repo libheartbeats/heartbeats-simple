@@ -11,7 +11,8 @@ int main(int argc, char** argv) {
   heartbeat_acc_record* window_buffer = malloc(window_size * sizeof(heartbeat_acc_record));
   heartbeat_acc_init(&hb, window_size, window_buffer, NULL);
   heartbeat_acc(&hb, 0, 1, 0, 1000000000, 1);
-  heartbeat_acc_log_window_buffer(&hb, 1, 1);
+  hb_acc_log_header(1);
+  hb_acc_log_window_buffer(&hb, 1);
 
   hb_acc_get_window_size(&hb);
   hb_acc_get_user_tag(&hb);
