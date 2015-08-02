@@ -8,6 +8,7 @@
 #include <inttypes.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 /* Determine which heartbeat implementation to use */
 #if defined(HEARTBEAT_MODE_ACC)
@@ -87,7 +88,7 @@ int hb_acc_pow_log_header(int fd) {
 int hb_log_header(int fd) {
 #endif
   int ret;
-  FILE* log = fdopen(fd, "w");
+  FILE* log = fdopen(dup(fd), "w");
   if (log == NULL) {
     perror("Failed to open log file for writing");
     ret = 1;
@@ -116,7 +117,7 @@ int hb_log_header(int fd) {
             "Global_Pwr", "Window_Pwr", "Instant_Pwr");
 #endif
     fprintf(log, "\n");
-    ret = fflush(log);
+    ret = fclose(log);
   }
   return ret;
 }
@@ -136,7 +137,7 @@ int hb_log_window_buffer(const heartbeat_context* hb,
 #endif
   int ret;
   uint64_t i;
-  FILE* log = fdopen(fd, "w");
+  FILE* log = fdopen(dup(fd), "w");
   if (log == NULL) {
     perror("Failed to open log file for writing");
     ret = 1;
@@ -189,7 +190,7 @@ int hb_log_window_buffer(const heartbeat_context* hb,
 #endif
       fprintf(log,"\n");
     }
-    ret = fflush(log);
+    ret = fclose(log);
   }
   return ret;
 }
