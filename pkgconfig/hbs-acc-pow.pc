@@ -1,0 +1,10 @@
+prefix=/usr/local
+exec_prefix=${prefix}
+includedir=${prefix}/include
+libdir=${exec_prefix}/lib
+
+Name: heartbeats-simple-acc-pow
+Description: Simple performance monitoring API with accuracy and power/energy tracking
+Version: 0.1.0
+Cflags: -I${includedir}/heartbeats-simple
+Libs: -L${libdir} -lhbs-acc-pow

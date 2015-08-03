@@ -9,6 +9,7 @@ LIBDIR = ./lib
 INCDIR = ./inc
 SRCDIR = ./src
 BINDIR = ./bin
+PCDIR = ./pkgconfig
 
 EXADIR = ./example
 EXABINDIR = $(BINDIR)/example
@@ -63,10 +64,13 @@ install: all
 	install -m 0644 $(LIBDIR)/*.so /usr/local/lib/
 	mkdir -p /usr/local/include/heartbeats-simple
 	install -m 0644 $(INCDIR)/* /usr/local/include/heartbeats-simple/
+	mkdir -p /usr/local/lib/pkgconfig
+	install -m 0644 $(PCDIR)/*.pc /usr/local/lib/pkgconfig
 
 uninstall:
 	rm -f /usr/local/lib/libhbs-*.so
 	rm -rf /usr/local/include/heartbeats-simple/
+	rm -f /usr/local/lib/pkgconfig/hbs*.pc
 
 ## cleaning
 clean:
