@@ -69,11 +69,8 @@ configure_file(
 # Install
 
 install(TARGETS hbs hbs-acc hbs-pow hbs-acc-pow DESTINATION lib)
-file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/inc/*.h")
-install(FILES ${headers} DESTINATION include/${PROJECT_NAME})
-
-file(GLOB pkgconfigs "${CMAKE_BINARY_DIR}/pkgconfig/*.pc")
-install(FILES ${pkgconfigs} DESTINATION lib/pkgconfig)
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/inc/ DESTINATION include/${PROJECT_NAME})
+install(DIRECTORY ${CMAKE_BINARY_DIR}/pkgconfig/ DESTINATION lib/pkgconfig)
 
 # Uninstall
 
