@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0)
 
 project(heartbeats-simple VERSION 0.1.0)
 
-set(COMPILE_FLAGS "-Wall -Wno-unknown-pragmas")
+set(CMAKE_C_FLAGS "-Wall -Wno-unknown-pragmas")
 set(CMAKE_BUILD_TYPE Release)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
@@ -35,32 +35,32 @@ target_link_libraries(hb-pow-test hbs-pow)
 add_executable(hb-acc-pow-test test/hb-acc-pow-test.c)
 target_link_libraries(hb-acc-pow-test hbs-acc-pow)
 
-# TODO: pkg-config
+# pkg-config
 
 set(PKG_CONFIG_EXEC_PREFIX "\${prefix}")
 set(PKG_CONFIG_LIBDIR "\${prefix}/lib")
 set(PKG_CONFIG_INCLUDEDIR "\${prefix}/include/heartbeats-simple")
 set(PKG_CONFIG_CFLAGS "-I\${includedir}")
 
-set(PKG_CONFIG_LIBS_HBS "-L\${libdir} -lhbs")
+set(PKG_CONFIG_LIBS "-L\${libdir} -lhbs")
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig/hbs.pc.in"
   "${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/hbs.pc"
 )
 
-set(PKG_CONFIG_LIBS_HBS "-L\${libdir} -lhbs-acc")
+set(PKG_CONFIG_LIBS "-L\${libdir} -lhbs-acc")
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig/hbs-acc.pc.in"
   "${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/hbs-acc.pc"
 )
 
-set(PKG_CONFIG_LIBS_HBS "-L\${libdir} -lhbs-pow")
+set(PKG_CONFIG_LIBS "-L\${libdir} -lhbs-pow")
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig/hbs-pow.pc.in"
   "${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/hbs-pow.pc"
 )
 
-set(PKG_CONFIG_LIBS_HBS "-L\${libdir} -lhbs-acc-pow")
+set(PKG_CONFIG_LIBS "-L\${libdir} -lhbs-acc-pow")
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig/hbs-acc-pow.pc.in"
   "${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/hbs-acc-pow.pc"

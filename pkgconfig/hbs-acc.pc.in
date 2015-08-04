@@ -7,4 +7,4 @@ Name: heartbeats-simple-acc
 Description: Simple performance monitoring API with accuracy tracking
 Version: ${PROJECT_VERSION}
 Cflags: ${PKG_CONFIG_CFLAGS}
-Libs: ${PKG_CONFIG_LIBS_HBS}
+Libs: ${PKG_CONFIG_LIBS}
