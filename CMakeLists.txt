@@ -11,6 +11,9 @@ include_directories(${PROJECT_SOURCE_DIR}/inc)
 
 # Libraries
 
+# Required to force fPIC on static libs
+set (CMAKE_POSITION_INDEPENDENT_CODE TRUE)
+
 set(HBS_SRC src/hb.c src/hb-util.c)
 set(HBS_ACC_SRC src/hb.c src/hb-util.c src/hb-acc-util.c)
 set(HBS_ACC_PROP HEARTBEAT_MODE_ACC;HEARTBEAT_USE_ACC)
