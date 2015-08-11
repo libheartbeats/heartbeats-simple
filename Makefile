@@ -12,7 +12,7 @@ cmake: $(BUILDDIR)
 install: all
 	cd _build && make install $(MAKE_PARAMS)
 
-uninstall: install
+uninstall:
 	cd $(BUILDDIR) && make uninstall $(MAKE_PARAMS)
 
 clean:

@@ -11,13 +11,31 @@ include_directories(${PROJECT_SOURCE_DIR}/inc)
 
 # Libraries
 
-add_library(hbs SHARED src/hb.c src/hb-util.c)
-add_library(hbs-acc SHARED src/hb.c src/hb-util.c src/hb-acc-util.c)
-set_target_properties (hbs-acc PROPERTIES COMPILE_DEFINITIONS "HEARTBEAT_MODE_ACC;HEARTBEAT_USE_ACC")
-add_library(hbs-pow SHARED src/hb.c src/hb-util.c src/hb-pow-util.c)
-set_target_properties (hbs-pow PROPERTIES COMPILE_DEFINITIONS "HEARTBEAT_MODE_POW;HEARTBEAT_USE_POW")
-add_library(hbs-acc-pow SHARED src/hb.c src/hb-util.c src/hb-acc-util.c src/hb-pow-util.c)
-set_target_properties (hbs-acc-pow PROPERTIES COMPILE_DEFINITIONS "HEARTBEAT_MODE_ACC_POW;HEARTBEAT_USE_ACC;HEARTBEAT_USE_POW")
+set(HBS_SRC src/hb.c src/hb-util.c)
+set(HBS_ACC_SRC src/hb.c src/hb-util.c src/hb-acc-util.c)
+set(HBS_ACC_PROP HEARTBEAT_MODE_ACC;HEARTBEAT_USE_ACC)
+set(HBS_POW_SRC src/hb.c src/hb-util.c src/hb-pow-util.c)
+set(HBS_POW_PROP HEARTBEAT_MODE_POW;HEARTBEAT_USE_POW)
+set(HBS_ACC_POW_SRC src/hb.c src/hb-util.c src/hb-acc-util.c src/hb-pow-util.c)
+set(HBS_ACC_POW_PROP HEARTBEAT_MODE_ACC_POW;HEARTBEAT_USE_ACC;HEARTBEAT_USE_POW)
+
+add_library(hbs SHARED ${HBS_SRC})
+add_library(hbs-static STATIC ${HBS_SRC})
+
+add_library(hbs-acc SHARED ${HBS_ACC_SRC})
+set_target_properties(hbs-acc PROPERTIES COMPILE_DEFINITIONS "${HBS_ACC_PROP}")
+add_library(hbs-acc-static STATIC ${HBS_ACC_SRC})
+set_target_properties(hbs-acc-static PROPERTIES COMPILE_DEFINITIONS "${HBS_ACC_PROP}")
+
+add_library(hbs-pow SHARED ${HBS_POW_SRC})
+set_target_properties(hbs-pow PROPERTIES COMPILE_DEFINITIONS "${HBS_POW_PROP}")
+add_library(hbs-pow-static STATIC ${HBS_POW_SRC})
+set_target_properties(hbs-pow-static PROPERTIES COMPILE_DEFINITIONS "${HBS_POW_PROP}")
+
+add_library(hbs-acc-pow SHARED ${HBS_ACC_POW_SRC})
+set_target_properties(hbs-acc-pow PROPERTIES COMPILE_DEFINITIONS "${HBS_ACC_POW_PROP}")
+add_library(hbs-acc-pow-static STATIC ${HBS_ACC_POW_SRC})
+set_target_properties(hbs-acc-pow-static PROPERTIES COMPILE_DEFINITIONS "${HBS_ACC_POW_PROP}")
 
 # Examples
 
