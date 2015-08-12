@@ -63,33 +63,66 @@ set(PKG_CONFIG_LIBDIR "\${prefix}/lib")
 set(PKG_CONFIG_INCLUDEDIR "\${prefix}/include/heartbeats-simple")
 set(PKG_CONFIG_CFLAGS "-I\${includedir}")
 
+set(PKG_CONFIG_NAME "heartbeats-simple")
+set(PKG_CONFIG_DESCRIPTION "Simple performance monitoring API")
 set(PKG_CONFIG_LIBS "-L\${libdir} -lhbs")
 configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig/hbs.pc.in"
+  "${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig.in"
   "${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/hbs.pc"
 )
+set(PKG_CONFIG_NAME "heartbeats-simple-static")
+set(PKG_CONFIG_LIBS "-L\${libdir} -lhbs-static")
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/hbs-static.pc"
+)
 
+set(PKG_CONFIG_NAME "heartbeats-simple-acc")
+set(PKG_CONFIG_DESCRIPTION "Simple performance monitoring API with accuracy tracking")
 set(PKG_CONFIG_LIBS "-L\${libdir} -lhbs-acc")
 configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig/hbs-acc.pc.in"
+  "${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig.in"
   "${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/hbs-acc.pc"
 )
-
-set(PKG_CONFIG_LIBS "-L\${libdir} -lhbs-pow")
+set(PKG_CONFIG_NAME "heartbeats-simple-acc-static")
+set(PKG_CONFIG_LIBS "-L\${libdir} -lhbs-acc-static")
 configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig/hbs-pow.pc.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/hbs-pow.pc"
+  "${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/hbs-acc-static.pc"
 )
 
+set(PKG_CONFIG_NAME "heartbeats-simple-pow")
+set(PKG_CONFIG_DESCRIPTION "Simple performance monitoring API with power/energy tracking")
+set(PKG_CONFIG_LIBS "-L\${libdir} -lhbs-pow")
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/hbs-pow.pc"
+)
+set(PKG_CONFIG_NAME "heartbeats-simple-pow-static")
+set(PKG_CONFIG_LIBS "-L\${libdir} -lhbs-pow-static")
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/hbs-pow-static.pc"
+)
+
+set(PKG_CONFIG_NAME "heartbeats-simple-acc-pow")
+set(PKG_CONFIG_DESCRIPTION "Simple performance monitoring API with accuracy and power/energy tracking")
 set(PKG_CONFIG_LIBS "-L\${libdir} -lhbs-acc-pow")
 configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig/hbs-acc-pow.pc.in"
+  "${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig.in"
   "${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/hbs-acc-pow.pc"
+)
+set(PKG_CONFIG_NAME "heartbeats-simple-acc-pow-static")
+set(PKG_CONFIG_LIBS "-L\${libdir} -lhbs-acc-pow-static")
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/hbs-acc-pow-static.pc"
 )
 
 # Install
 
 install(TARGETS hbs hbs-acc hbs-pow hbs-acc-pow DESTINATION lib)
+install(TARGETS hbs-static hbs-acc-static hbs-pow-static hbs-acc-pow-static DESTINATION lib)
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/inc/ DESTINATION include/${PROJECT_NAME})
 install(DIRECTORY ${CMAKE_BINARY_DIR}/pkgconfig/ DESTINATION lib/pkgconfig)
 
