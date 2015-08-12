@@ -16,7 +16,7 @@ hbs hbs-acc hbs-pow hbs-acc-pow hbs-static hbs-acc-static hbs-pow-static hbs-acc
 	cd $(BUILDDIR) && make $@ $(MAKE_PARAMS)
 
 install: all
-	cd _build && make install $(MAKE_PARAMS)
+	cd $(BUILDDIR) && make install $(MAKE_PARAMS)
 
 uninstall:
 	cd $(BUILDDIR) && make uninstall $(MAKE_PARAMS)
