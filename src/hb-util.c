@@ -6,6 +6,7 @@
  */
 
 #include <inttypes.h>
+#include <stdlib.h>
 
 /* Determine which heartbeat implementation to use */
 #if defined(HEARTBEAT_MODE_POW)
@@ -27,7 +28,7 @@ uint64_t hb_acc_pow_get_window_size(const heartbeat_acc_pow_context* hb) {
 #else
 uint64_t hb_get_window_size(const heartbeat_context* hb) {
 #endif
-  return hb->ws.window_size;
+  return hb == NULL ? 0 : hb->ws.window_size;
 }
 
 #if defined(HEARTBEAT_MODE_ACC)
@@ -39,7 +40,7 @@ uint64_t hb_acc_pow_get_user_tag(const heartbeat_acc_pow_context* hb) {
 #else
 uint64_t hb_get_user_tag(const heartbeat_context* hb) {
 #endif
-  return hb->window_buffer[hb->ws.read_index].user_tag;
+  return hb == NULL ? 0 : hb->window_buffer[hb->ws.read_index].user_tag;
 }
 
 #if defined(HEARTBEAT_MODE_ACC)
@@ -51,7 +52,7 @@ uint64_t hb_acc_pow_get_global_time(const heartbeat_acc_pow_context* hb) {
 #else
 uint64_t hb_get_global_time(const heartbeat_context* hb) {
 #endif
-  return hb->td.global;
+  return hb == NULL ? 0 : hb->td.global;
 }
 
 #if defined(HEARTBEAT_MODE_ACC)
@@ -63,7 +64,7 @@ uint64_t hb_acc_pow_get_window_time(const heartbeat_acc_pow_context* hb) {
 #else
 uint64_t hb_get_window_time(const heartbeat_context* hb) {
 #endif
-  return hb->td.window;
+  return hb == NULL ? 0 : hb->td.window;
 }
 
 #if defined(HEARTBEAT_MODE_ACC)
@@ -75,7 +76,7 @@ uint64_t hb_acc_pow_get_global_work(const heartbeat_acc_pow_context* hb) {
 #else
 uint64_t hb_get_global_work(const heartbeat_context* hb) {
 #endif
-  return hb->wd.global;
+  return hb == NULL ? 0 : hb->wd.global;
 }
 
 #if defined(HEARTBEAT_MODE_ACC)
@@ -87,7 +88,7 @@ uint64_t hb_acc_pow_get_window_work(const heartbeat_acc_pow_context* hb) {
 #else
 uint64_t hb_get_window_work(const heartbeat_context* hb) {
 #endif
-  return hb->wd.window;
+  return hb == NULL ? 0 : hb->wd.window;
 }
 
 #if defined(HEARTBEAT_MODE_ACC)
@@ -99,7 +100,7 @@ double hb_acc_pow_get_global_perf(const heartbeat_acc_pow_context* hb) {
 #else
 double hb_get_global_perf(const heartbeat_context* hb) {
 #endif
-  return hb->window_buffer[hb->ws.read_index].perf.global;
+  return hb == NULL ? 0.0 : hb->window_buffer[hb->ws.read_index].perf.global;
 }
 
 #if defined(HEARTBEAT_MODE_ACC)
@@ -111,7 +112,7 @@ double hb_acc_pow_get_window_perf(const heartbeat_acc_pow_context* hb) {
 #else
 double hb_get_window_perf(const heartbeat_context* hb) {
 #endif
-  return hb->window_buffer[hb->ws.read_index].perf.window;
+  return hb == NULL ? 0.0 : hb->window_buffer[hb->ws.read_index].perf.window;
 }
 
 #if defined(HEARTBEAT_MODE_ACC)
@@ -123,5 +124,5 @@ double hb_acc_pow_get_instant_perf(const heartbeat_acc_pow_context* hb) {
 #else
 double hb_get_instant_perf(const heartbeat_context* hb) {
 #endif
-  return hb->window_buffer[hb->ws.read_index].perf.instant;
+  return hb == NULL ? 0.0 : hb->window_buffer[hb->ws.read_index].perf.instant;
 }

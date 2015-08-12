@@ -135,6 +135,10 @@ int hb_acc_pow_log_window_buffer(const heartbeat_acc_pow_context* hb,
 int hb_log_window_buffer(const heartbeat_context* hb,
                          int fd) {
 #endif
+  if (hb == NULL) {
+    return 1;
+  }
+
   int ret;
   uint64_t i;
   FILE* log = fdopen(dup(fd), "w");
@@ -233,6 +237,10 @@ void heartbeat(heartbeat_context* hb,
                uint64_t end_time) {
   heartbeat_record* old_record;
 #endif
+  if (hb == NULL) {
+    return;
+  }
+
   while (__sync_lock_test_and_set(&hb->lock, 1)) {
     while (hb->lock);
   }
