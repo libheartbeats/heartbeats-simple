@@ -4,6 +4,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <sys/time.h>
+#ifdef __MACH__
+#include <mach/clock.h>
+#include <mach/mach.h>
+#endif
 #include <inttypes.h>
 #include <unistd.h>
 #include "heartbeat-pow.h"
@@ -22,9 +27,20 @@ static inline uint64_t get_energy() {
 
 // get time from the system in nanoseconds
 static inline uint64_t get_time() {
-  struct timespec time_info;
-  clock_gettime(CLOCK_REALTIME, &time_info);
-  return time_info.tv_sec * 1000000000 + time_info.tv_nsec;
+  struct timespec ts;
+#ifdef __MACH__
+  // OS X does not have clock_gettime, use clock_get_time
+  clock_serv_t cclock;
+  mach_timespec_t mts;
+  host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
+  clock_get_time(cclock, &mts);
+  mach_port_deallocate(mach_task_self(), cclock);
+  ts.tv_sec = mts.tv_sec;
+  ts.tv_nsec = mts.tv_nsec;
+#else
+  clock_gettime(CLOCK_REALTIME, &ts);
+#endif
+  return ts.tv_sec * 1000000000 + ts.tv_nsec;
 }
 
 int main(int argc, char** argv) {

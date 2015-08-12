@@ -47,7 +47,11 @@ ENDIF(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
 # Examples
 
 add_executable(hb-pow-example example/hb-pow-example.c)
-target_link_libraries(hb-pow-example hbs-pow rt)
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  target_link_libraries(hb-pow-example hbs-pow)
+else()
+  target_link_libraries(hb-pow-example hbs-pow rt)
+endif()
 
 # Tests
 
