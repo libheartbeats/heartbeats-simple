@@ -1,5 +1,8 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 2.8)
 
+if(POLICY CMP0048)
+  cmake_policy(SET CMP0048 NEW)
+endif()
 project(heartbeats-simple VERSION 0.1.0)
 
 set(CMAKE_C_FLAGS "-Wall -Wno-unknown-pragmas")
