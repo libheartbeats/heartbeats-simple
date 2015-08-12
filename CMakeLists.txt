@@ -1,9 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
-if(POLICY CMP0048)
-  cmake_policy(SET CMP0048 NEW)
-endif()
-project(heartbeats-simple VERSION 0.1.0)
+project(heartbeats-simple)
+set(PROJECT_VERSION 0.1.0)
 
 set(CMAKE_C_FLAGS "-Wall -Wno-unknown-pragmas")
 set(CMAKE_BUILD_TYPE Release)
@@ -46,7 +44,7 @@ set_target_properties(hbs-acc-pow-static PROPERTIES COMPILE_DEFINITIONS "${HBS_A
 # Examples
 
 add_executable(hb-pow-example example/hb-pow-example.c)
-target_link_libraries(hb-pow-example hbs-pow)
+target_link_libraries(hb-pow-example hbs-pow rt)
 
 # Tests
 
