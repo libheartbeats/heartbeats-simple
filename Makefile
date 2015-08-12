@@ -22,5 +22,4 @@ uninstall:
 	cd $(BUILDDIR) && make uninstall $(MAKE_PARAMS)
 
 clean:
-	cd $(BUILDDIR) && make clean $(MAKE_PARAMS)
-	-rm -rf $(BUILDDIR)
+	rm -rf $(BUILDDIR)
