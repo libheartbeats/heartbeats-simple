@@ -12,9 +12,6 @@ include_directories(${PROJECT_SOURCE_DIR}/inc)
 
 # Libraries
 
-# Required to force fPIC on static libs
-set (CMAKE_POSITION_INDEPENDENT_CODE TRUE)
-
 set(HBS_SRC src/hb.c src/hb-util.c)
 set(HBS_ACC_SRC src/hb.c src/hb-util.c src/hb-acc-util.c)
 set(HBS_ACC_PROP HEARTBEAT_MODE_ACC;HEARTBEAT_USE_ACC)
@@ -40,6 +37,12 @@ add_library(hbs-acc-pow SHARED ${HBS_ACC_POW_SRC})
 set_target_properties(hbs-acc-pow PROPERTIES COMPILE_DEFINITIONS "${HBS_ACC_POW_PROP}")
 add_library(hbs-acc-pow-static STATIC ${HBS_ACC_POW_SRC})
 set_target_properties(hbs-acc-pow-static PROPERTIES COMPILE_DEFINITIONS "${HBS_ACC_POW_PROP}")
+
+# Required to force fPIC on static libs
+# 'set (CMAKE_POSITION_INDEPENDENT_CODE TRUE)' not supported until cmake 2.8.9
+IF(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+  SET_TARGET_PROPERTIES(hbs-static hbs-acc-static hbs-pow-static hbs-acc-pow-static PROPERTIES COMPILE_FLAGS "-fPIC")
+ENDIF(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
 
 # Examples
 
