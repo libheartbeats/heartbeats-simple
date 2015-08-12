@@ -1,7 +1,3 @@
-This project is under active development.  
-Things are likely to break and APIs are subject to change without warning.  
-Use at your own risk!
-
 # Simple Heartbeats
 
 This library provides simplified performance, accuracy, and power monitoring.
@@ -24,16 +20,31 @@ make
 Installation places libraries in `/usr/local/lib` and header files in
 `/usr/local/include/heartbeats-simple`.
 
-To install all libraries, run:
+To install all libraries and headers, run with proper privileges:
 
 ``` sh
-sudo make install
+make install
 ```
 
 ## Uninstalling
 
-To remove libraries and headers installed to the system, run:
+Install must be run before uninstalling in order to have a manifest.
+
+To remove libraries and headers installed to the system, run with proper
+privileges:
 
 ``` sh
-sudo make uninstall
+make uninstall
+```
+
+## Cleaning
+
+Note that cleaning will remove the installation manifest.
+If you ran the install command and want to remove the installed files,
+you must uninstall before cleaning.
+
+The remove generated build configs and artifacts, run:
+
+``` sh
+make clean
 ```
