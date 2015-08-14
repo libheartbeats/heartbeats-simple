@@ -7,7 +7,7 @@ $(BUILDDIR):
 	mkdir -p $@
 
 cmake: $(BUILDDIR)
-	cd $(BUILDDIR) && cmake ..
+	cd $(BUILDDIR) && cmake -DCMAKE_BUILD_TYPE=Release ..
 
 libs: cmake
 	cd $(BUILDDIR) && make $(MAKE_PARAMS)
