@@ -9,22 +9,27 @@ energy readers automatically.
 
 ## Building
 
+This project uses CMake.
+
 To build all libraries, run:
 
 ``` sh
+mkdir _build
+cd _build
+cmake ..
 make
 ```
 
 ## Installing
-
-Installation places libraries in `/usr/local/lib` and header files in
-`/usr/local/include/heartbeats-simple`.
 
 To install all libraries and headers, run with proper privileges:
 
 ``` sh
 make install
 ```
+
+On Linux, installation typically places libraries in `/usr/local/lib` and
+header files in `/usr/local/include/heartbeats-simple`.
 
 ## Uninstalling
 
@@ -39,11 +44,7 @@ make uninstall
 
 ## Cleaning
 
-Note that cleaning will remove the installation manifest.
-If you ran the install command and want to remove the installed files,
-you must uninstall before cleaning.
-
-The remove generated build configs and artifacts, run:
+To cleanup build artifacts, run
 
 ``` sh
 make clean
