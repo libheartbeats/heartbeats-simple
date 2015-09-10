@@ -254,9 +254,9 @@ void heartbeat(heartbeat_context* hb,
   // time and work
   int64_t delta_time = end_time - start_time;
   hb->td.global += delta_time;
-  hb->td.window += delta_time - (old_record->end_time - old_record->start_time);
+  hb->td.window = hb->td.global - old_record->td.global;
   hb->wd.global += work;
-  hb->wd.window += work - old_record->work;
+  hb->wd.window = hb->wd.global - old_record->wd.global;
   hb->window_buffer[hb->ws.buffer_index].work = work;
   memcpy(&hb->window_buffer[hb->ws.buffer_index].wd, &hb->wd, sizeof(heartbeat_udata));
   hb->window_buffer[hb->ws.buffer_index].start_time = start_time;
@@ -272,7 +272,7 @@ void heartbeat(heartbeat_context* hb,
 #if defined(HEARTBEAT_USE_ACC)
   // accuracy
   hb->ad.global += accuracy;
-  hb->ad.window += accuracy - old_record->accuracy;
+  hb->ad.window = hb->ad.global - old_record->ad.global;
   hb->window_buffer[hb->ws.buffer_index].accuracy = accuracy;
   memcpy(&hb->window_buffer[hb->ws.buffer_index].ad, &hb->ad, sizeof(heartbeat_udata));
   hb->window_buffer[hb->ws.buffer_index].acc.global = ((double) hb->ad.global) / total_seconds;
@@ -284,7 +284,7 @@ void heartbeat(heartbeat_context* hb,
   // energy
   int64_t delta_energy = end_energy - start_energy;
   hb->ed.global += delta_energy;
-  hb->ed.window += delta_energy - (old_record->end_energy - old_record->start_energy);
+  hb->ed.window = hb->ed.global - old_record->ed.global;
   hb->window_buffer[hb->ws.buffer_index].start_energy = start_energy;
   hb->window_buffer[hb->ws.buffer_index].end_energy = end_energy;
   memcpy(&hb->window_buffer[hb->ws.buffer_index].ed, &hb->ed, sizeof(heartbeat_udata));
