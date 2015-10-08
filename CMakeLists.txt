@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.9)
 
 project(heartbeats-simple)
 set(PROJECT_VERSION 0.1.0)
@@ -18,6 +18,8 @@ set(HBS_POW_SRC src/hb.c src/hb-util.c src/hb-pow-util.c)
 set(HBS_POW_PROP HEARTBEAT_MODE_POW;HEARTBEAT_USE_POW)
 set(HBS_ACC_POW_SRC src/hb.c src/hb-util.c src/hb-acc-util.c src/hb-pow-util.c)
 set(HBS_ACC_POW_PROP HEARTBEAT_MODE_ACC_POW;HEARTBEAT_USE_ACC;HEARTBEAT_USE_POW)
+# force fPIC on static libs
+set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 
 add_library(hbs SHARED ${HBS_SRC})
 add_library(hbs-static STATIC ${HBS_SRC})
@@ -36,12 +38,6 @@ add_library(hbs-acc-pow SHARED ${HBS_ACC_POW_SRC})
 set_target_properties(hbs-acc-pow PROPERTIES COMPILE_DEFINITIONS "${HBS_ACC_POW_PROP}")
 add_library(hbs-acc-pow-static STATIC ${HBS_ACC_POW_SRC})
 set_target_properties(hbs-acc-pow-static PROPERTIES COMPILE_DEFINITIONS "${HBS_ACC_POW_PROP}")
-
-# Required to force fPIC on static libs
-# 'set (CMAKE_POSITION_INDEPENDENT_CODE TRUE)' not supported until cmake 2.8.9
-IF(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
-  SET_TARGET_PROPERTIES(hbs-static hbs-acc-static hbs-pow-static hbs-acc-pow-static PROPERTIES COMPILE_FLAGS "-fPIC")
-ENDIF(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
 
 # Examples
 
