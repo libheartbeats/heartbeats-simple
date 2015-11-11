@@ -10,6 +10,8 @@
 extern "C" {
 #endif
 
+#include <inttypes.h>
+
 typedef struct heartbeat_udata {
   uint64_t global;
   uint64_t window;

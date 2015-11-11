@@ -11,6 +11,7 @@
 extern "C" {
 #endif
 
+#include <inttypes.h>
 #include "heartbeat-common-types.h"
 
 struct heartbeat_acc_context;
