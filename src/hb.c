@@ -32,24 +32,28 @@ static inline void init_udata(heartbeat_udata* data) {
 int heartbeat_acc_init(heartbeat_acc_context* hb,
                        uint64_t window_size,
                        heartbeat_acc_record* window_buffer,
+                       int log_fd,
                        heartbeat_acc_window_complete* hwc_callback) {
   size_t record_size = sizeof(heartbeat_acc_record);
 #elif defined(HEARTBEAT_MODE_POW)
 int heartbeat_pow_init(heartbeat_pow_context* hb,
                        uint64_t window_size,
                        heartbeat_pow_record* window_buffer,
+                       int log_fd,
                        heartbeat_pow_window_complete* hwc_callback) {
   size_t record_size = sizeof(heartbeat_pow_record);
 #elif defined(HEARTBEAT_MODE_ACC_POW)
 int heartbeat_acc_pow_init(heartbeat_acc_pow_context* hb,
                            uint64_t window_size,
                            heartbeat_acc_pow_record* window_buffer,
+                           int log_fd,
                            heartbeat_acc_pow_window_complete* hwc_callback) {
   size_t record_size = sizeof(heartbeat_acc_pow_record);
 #else
 int heartbeat_init(heartbeat_context* hb,
                    uint64_t window_size,
                    heartbeat_record* window_buffer,
+                   int log_fd,
                    heartbeat_window_complete* hwc_callback) {
   size_t record_size = sizeof(heartbeat_record);
 #endif
@@ -60,6 +64,7 @@ int heartbeat_init(heartbeat_context* hb,
   hb->ws.buffer_index = 0;
   hb->ws.read_index = 0;
   hb->ws.window_size = window_size;
+  hb->ws.log_fd = log_fd;
   hb->window_buffer = window_buffer;
   // cheap way to set initial values to 0 (necessary for managing window data)
   memset(hb->window_buffer, 0, window_size * record_size);
@@ -299,6 +304,17 @@ void heartbeat(heartbeat_context* hb,
   hb->ws.buffer_index++;
   // check circular buffer, issue callback if full
   if (hb->ws.buffer_index % hb->ws.window_size == 0) {
+    if (hb->ws.log_fd > 0) {
+#if defined(HEARTBEAT_MODE_ACC)
+      hb_acc_log_window_buffer(hb, hb->ws.log_fd);
+#elif defined(HEARTBEAT_MODE_POW)
+      hb_pow_log_window_buffer(hb, hb->ws.log_fd);
+#elif defined(HEARTBEAT_MODE_ACC_POW)
+      hb_acc_pow_log_window_buffer(hb, hb->ws.log_fd);
+#else
+      hb_log_window_buffer(hb, hb->ws.log_fd);
+#endif
+    }
     if (hb->hwc_callback != NULL) {
       (*hb->hwc_callback)(hb);
     }

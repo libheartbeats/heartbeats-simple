@@ -9,12 +9,13 @@ int main(int argc, char** argv) {
   uint64_t window_size = 20;
   heartbeat_acc_pow_context hb;
   heartbeat_acc_pow_record* window_buffer = malloc(window_size * sizeof(heartbeat_acc_pow_record));
-  heartbeat_acc_pow_init(&hb, window_size, window_buffer, NULL);
+  heartbeat_acc_pow_init(&hb, window_size, window_buffer, -1, NULL);
   heartbeat_acc_pow(&hb, 0, 1, 0, 1000000000, 1, 0, 1000000);
   hb_acc_pow_log_header(1);
   hb_acc_pow_log_window_buffer(&hb, 1);
 
   hb_acc_pow_get_window_size(&hb);
+  hb_acc_pow_get_log_fd(&hb);
   hb_acc_pow_get_user_tag(&hb);
   hb_acc_pow_get_global_time(&hb);
   hb_acc_pow_get_window_time(&hb);

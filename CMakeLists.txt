@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.9)
 
 project(heartbeats-simple)
-set(PROJECT_VERSION 0.1.0)
+set(PROJECT_VERSION 0.2.0)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wno-unknown-pragmas")
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
@@ -64,7 +64,7 @@ target_link_libraries(hb-acc-pow-test hbs-acc-pow)
 
 set(PKG_CONFIG_EXEC_PREFIX "\${prefix}")
 set(PKG_CONFIG_LIBDIR "\${prefix}/lib")
-set(PKG_CONFIG_INCLUDEDIR "\${prefix}/include/heartbeats-simple")
+set(PKG_CONFIG_INCLUDEDIR "\${prefix}/include/${PROJECT_NAME}")
 set(PKG_CONFIG_CFLAGS "-I\${includedir}")
 
 set(PKG_CONFIG_NAME "heartbeats-simple")

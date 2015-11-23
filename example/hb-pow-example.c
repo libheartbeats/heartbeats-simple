@@ -15,8 +15,7 @@
 
 // Callback function for when a window is complete (window buffer is full)
 void window_complete(const heartbeat_pow_context* hb) {
-  // we should log the data or else we'll lose it
-  hb_pow_log_window_buffer(hb, fileno(stdout));
+  // dummy function
 }
 
 // Simulate energy readings
@@ -49,6 +48,7 @@ int main(int argc, char** argv) {
   const int window_size = 5;
   uint64_t start_time, end_time;
   uint64_t start_energy, end_energy;
+  int fd = fileno(stdout);
 
   // Alternatively, a window buffer can be allocated on the stack with a
   // statically sized array - just don't let it go out of scope before
@@ -57,8 +57,8 @@ int main(int argc, char** argv) {
 
   // initialize heartbeat
   heartbeat_pow_context hb;
-  heartbeat_pow_init(&hb, window_size, window_buffer, &window_complete);
-  hb_pow_log_header(fileno(stdout));
+  heartbeat_pow_init(&hb, window_size, window_buffer, fd, &window_complete);
+  hb_pow_log_header(fd);
 
   // simple example - doesn't track heartbeat time/energy overhead
   for(i = 0; i < iterations; i++) {
