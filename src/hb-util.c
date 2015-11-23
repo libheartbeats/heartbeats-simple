@@ -32,6 +32,18 @@ uint64_t hb_get_window_size(const heartbeat_context* hb) {
 }
 
 #if defined(HEARTBEAT_MODE_ACC)
+int hb_acc_get_log_fd(const heartbeat_acc_context* hb) {
+#elif defined(HEARTBEAT_MODE_POW)
+int hb_pow_get_log_fd(const heartbeat_pow_context* hb) {
+#elif defined(HEARTBEAT_MODE_ACC_POW)
+int hb_acc_pow_get_log_fd(const heartbeat_acc_pow_context* hb) {
+#else
+int hb_get_log_fd(const heartbeat_context* hb) {
+#endif
+  return hb == NULL ? -1 : hb->ws.log_fd;
+}
+
+#if defined(HEARTBEAT_MODE_ACC)
 uint64_t hb_acc_get_user_tag(const heartbeat_acc_context* hb) {
 #elif defined(HEARTBEAT_MODE_POW)
 uint64_t hb_pow_get_user_tag(const heartbeat_pow_context* hb) {

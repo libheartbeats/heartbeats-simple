@@ -27,6 +27,7 @@ typedef struct heartbeat_window_state {
   uint64_t buffer_index;
   uint64_t read_index;
   uint64_t window_size;
+  int log_fd;
 } heartbeat_window_state;
 
 #ifdef __cplusplus

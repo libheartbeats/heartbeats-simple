@@ -47,12 +47,14 @@ typedef struct heartbeat_context {
  * @param hb
  * @param window_size
  * @param window_buffer
+ * @param log_fd
  * @param hwc_callback
  * @return 0 on success, another value otherwise
  */
 int heartbeat_init(heartbeat_context* hb,
                    uint64_t window_size,
                    heartbeat_record* window_buffer,
+                   int log_fd,
                    heartbeat_window_complete* hwc_callback);
 
 /**
@@ -95,6 +97,14 @@ int hb_log_window_buffer(const heartbeat_context* hb, int fd);
  * @return the size of the sliding window (uint64_t)
  */
 uint64_t hb_get_window_size(const heartbeat_context* hb);
+
+/**
+ * Returns the log file descriptor
+ *
+ * @param hb pointer to heartbeat_t
+ * @return the log file descriptor (int)
+ */
+int hb_get_log_fd(const heartbeat_context* hb);
 
 /**
  * Returns the current user tag
