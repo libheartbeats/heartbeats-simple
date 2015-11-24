@@ -60,6 +60,24 @@ target_link_libraries(hb-pow-test hbs-pow)
 add_executable(hb-acc-pow-test test/hb-acc-pow-test.c)
 target_link_libraries(hb-acc-pow-test hbs-acc-pow)
 
+enable_testing()
+
+macro(add_unit_test target)
+  set(UNIT_TEST_TARGETS ${UNIT_TEST_TARGETS} ${target})
+  add_test(${target} ${EXECUTABLE_OUTPUT_PATH}/${target})
+endmacro(add_unit_test)
+
+add_unit_test(hb-test)
+add_unit_test(hb-acc-test)
+add_unit_test(hb-pow-test)
+add_unit_test(hb-acc-pow-test)
+
+add_custom_target(AllTests ALL DEPENDS ${UNIT_TEST_TARGETS})
+add_custom_command(TARGET AllTests POST_BUILD
+                   COMMAND ctest ARGS --output-on-failure
+                   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+                   COMMENT "Running unit tests...")
+
 # pkg-config
 
 set(PKG_CONFIG_EXEC_PREFIX "\${prefix}")
