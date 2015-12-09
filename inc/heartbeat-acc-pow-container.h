@@ -23,6 +23,7 @@ typedef struct heartbeat_acc_pow_container {
 
 /**
  * Allocate the window buffer.
+ * Sets errno on failure.
  *
  * @param hc
  * @param window_size
@@ -33,6 +34,7 @@ int heartbeat_acc_pow_container_init(heartbeat_acc_pow_container* hc,
 
 /**
  * Convenience function to initialize the container and the heartbeat context.
+ * Sets errno on failure.
  *
  * @param hc
  * @param window_size

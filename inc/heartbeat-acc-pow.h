@@ -55,6 +55,8 @@ typedef struct heartbeat_acc_pow_context {
 
 /**
  * Initialize a heartbeats instance.
+ * Sets errno on failure.
+ * Only fails if hb is NULL, window_size is 0, or window_buffer is NULL.
  *
  * @param hb
  * @param window_size
@@ -93,6 +95,7 @@ void heartbeat_acc_pow(heartbeat_acc_pow_context* hb,
 
 /**
  * Write the header text to a log file.
+ * Sets errno on failure.
  *
  * @param fd
  * @return 0 on success, error code otherwise
@@ -101,6 +104,7 @@ int hb_acc_pow_log_header(int fd);
 
 /**
  * Logs the circular window buffer up to the current read index.
+ * Sets errno on failure.
  *
  * @param hb
  * @param fd

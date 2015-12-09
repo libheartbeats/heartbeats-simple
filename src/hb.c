@@ -4,8 +4,9 @@
  * @author Connor Imes
  * @date 2015-07-15
  */
-#include <stdio.h>
+#include <errno.h>
 #include <inttypes.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -58,7 +59,8 @@ int heartbeat_init(heartbeat_context* hb,
   size_t record_size = sizeof(heartbeat_record);
 #endif
   if (hb == NULL || window_buffer == NULL || window_size == 0) {
-    return 1;
+    errno = EINVAL;
+    return -1;
   }
 
   hb->ws.buffer_index = 0;
@@ -95,8 +97,7 @@ int hb_log_header(int fd) {
   int ret;
   FILE* log = fdopen(dup(fd), "w");
   if (log == NULL) {
-    perror("Failed to open log file for writing");
-    ret = 1;
+    ret = -1;
   } else {
     fprintf(log,
             "%-6s %-6s"
@@ -141,15 +142,15 @@ int hb_log_window_buffer(const heartbeat_context* hb,
                          int fd) {
 #endif
   if (hb == NULL) {
-    return 1;
+    errno = EINVAL;
+    return -1;
   }
 
   int ret;
   uint64_t i;
   FILE* log = fdopen(dup(fd), "w");
   if (log == NULL) {
-    perror("Failed to open log file for writing");
-    ret = 1;
+    ret = -1;
   } else {
     for (i = 0; i < hb->ws.buffer_index; i++) {
       fprintf(log,
@@ -243,6 +244,7 @@ void heartbeat(heartbeat_context* hb,
   heartbeat_record* old_record;
 #endif
   if (hb == NULL) {
+    errno = EINVAL;
     return;
   }
 

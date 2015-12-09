@@ -23,6 +23,7 @@ typedef struct heartbeat_container {
 
 /**
  * Allocate the window buffer and store the file descriptor.
+ * Sets errno on failure.
  *
  * @param hc
  * @param window_size
@@ -33,6 +34,7 @@ int heartbeat_container_init(heartbeat_container* hc,
 
 /**
  * Convenience function to initialize the container and the heartbeat context.
+ * Sets errno on failure.
  *
  * @param hc
  * @param window_size

@@ -4,6 +4,7 @@
  *
  * @author Connor Imes
  */
+#include <errno.h>
 #include <inttypes.h>
 #include <stdlib.h>
 
@@ -36,11 +37,12 @@ int heartbeat_container_init(heartbeat_container* hc,
   size_t record_size = sizeof(heartbeat_record);
 #endif
   if (hc == NULL) {
-    return 1;
+    errno = EINVAL;
+    return -1;
   }
   hc->window_buffer = malloc(window_size * record_size);
   if (hc->window_buffer == NULL) {
-    return 1;
+    return -1;
   }
   return 0;
 }
@@ -51,7 +53,7 @@ int heartbeat_acc_container_init_context(heartbeat_acc_container* hc,
                                          int log_fd,
                                          heartbeat_acc_window_complete* hwc_callback) {
   if (heartbeat_acc_container_init(hc, window_size)) {
-    return 1;
+    return -1;
   }
   if (heartbeat_acc_init(&hc->hb,
                          window_size,
@@ -59,7 +61,7 @@ int heartbeat_acc_container_init_context(heartbeat_acc_container* hc,
                          log_fd,
                          hwc_callback)) {
     heartbeat_acc_container_finish(hc);
-    return 1;
+    return -1;
   }
   return 0;
 }
@@ -69,7 +71,7 @@ int heartbeat_pow_container_init_context(heartbeat_pow_container* hc,
                                          int log_fd,
                                          heartbeat_pow_window_complete* hwc_callback) {
   if (heartbeat_pow_container_init(hc, window_size)) {
-    return 1;
+    return -1;
   }
   if (heartbeat_pow_init(&hc->hb,
                          window_size,
@@ -77,7 +79,7 @@ int heartbeat_pow_container_init_context(heartbeat_pow_container* hc,
                          log_fd,
                          hwc_callback)) {
     heartbeat_pow_container_finish(hc);
-    return 1;
+    return -1;
   }
   return 0;
 }
@@ -87,7 +89,7 @@ int heartbeat_acc_pow_container_init_context(heartbeat_acc_pow_container* hc,
                                              int log_fd,
                                              heartbeat_acc_pow_window_complete* hwc_callback) {
   if (heartbeat_acc_pow_container_init(hc, window_size)) {
-    return 1;
+    return -1;
   }
   if (heartbeat_acc_pow_init(&hc->hb,
                              window_size,
@@ -95,7 +97,7 @@ int heartbeat_acc_pow_container_init_context(heartbeat_acc_pow_container* hc,
                              log_fd,
                              hwc_callback)) {
     heartbeat_acc_pow_container_finish(hc);
-    return 1;
+    return -1;
   }
   return 0;
 }
@@ -105,7 +107,7 @@ int heartbeat_container_init_context(heartbeat_container* hc,
                                      int log_fd,
                                      heartbeat_window_complete* hwc_callback) {
   if (heartbeat_container_init(hc, window_size)) {
-    return 1;
+    return -1;
   }
   if (heartbeat_init(&hc->hb,
                      window_size,
@@ -113,7 +115,7 @@ int heartbeat_container_init_context(heartbeat_container* hc,
                      log_fd,
                      hwc_callback)) {
     heartbeat_container_finish(hc);
-    return 1;
+    return -1;
   }
   return 0;
 }
