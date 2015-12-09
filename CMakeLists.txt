@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.9)
 
 project(heartbeats-simple)
-set(PROJECT_VERSION 0.2.0)
+set(PROJECT_VERSION 0.2.1)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wno-unknown-pragmas")
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
@@ -11,12 +11,12 @@ include_directories(${PROJECT_SOURCE_DIR}/inc)
 
 # Libraries
 
-set(HBS_SRC src/hb.c src/hb-util.c)
-set(HBS_ACC_SRC src/hb.c src/hb-util.c src/hb-acc-util.c)
+set(HBS_SRC src/hb.c src/hb-util.c src/hb-container.c)
+set(HBS_ACC_SRC src/hb.c src/hb-util.c src/hb-acc-util.c src/hb-container.c)
 set(HBS_ACC_PROP HEARTBEAT_MODE_ACC;HEARTBEAT_USE_ACC)
-set(HBS_POW_SRC src/hb.c src/hb-util.c src/hb-pow-util.c)
+set(HBS_POW_SRC src/hb.c src/hb-util.c src/hb-pow-util.c src/hb-container.c)
 set(HBS_POW_PROP HEARTBEAT_MODE_POW;HEARTBEAT_USE_POW)
-set(HBS_ACC_POW_SRC src/hb.c src/hb-util.c src/hb-acc-util.c src/hb-pow-util.c)
+set(HBS_ACC_POW_SRC src/hb.c src/hb-util.c src/hb-acc-util.c src/hb-pow-util.c src/hb-container.c)
 set(HBS_ACC_POW_PROP HEARTBEAT_MODE_ACC_POW;HEARTBEAT_USE_ACC;HEARTBEAT_USE_POW)
 # force fPIC on static libs
 set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
@@ -60,6 +60,15 @@ target_link_libraries(hb-pow-test hbs-pow)
 add_executable(hb-acc-pow-test test/hb-acc-pow-test.c)
 target_link_libraries(hb-acc-pow-test hbs-acc-pow)
 
+add_executable(hb-container-test test/hb-container-test.c)
+target_link_libraries(hb-container-test hbs)
+add_executable(hb-acc-container-test test/hb-acc-container-test.c)
+target_link_libraries(hb-acc-container-test hbs-acc)
+add_executable(hb-pow-container-test test/hb-pow-container-test.c)
+target_link_libraries(hb-pow-container-test hbs-pow)
+add_executable(hb-acc-pow-container-test test/hb-acc-pow-container-test.c)
+target_link_libraries(hb-acc-pow-container-test hbs-acc-pow)
+
 enable_testing()
 
 macro(add_unit_test target)
@@ -71,6 +80,11 @@ add_unit_test(hb-test)
 add_unit_test(hb-acc-test)
 add_unit_test(hb-pow-test)
 add_unit_test(hb-acc-pow-test)
+
+add_unit_test(hb-container-test)
+add_unit_test(hb-acc-container-test)
+add_unit_test(hb-pow-container-test)
+add_unit_test(hb-acc-pow-container-test)
 
 add_custom_target(AllTests ALL DEPENDS ${UNIT_TEST_TARGETS})
 add_custom_command(TARGET AllTests POST_BUILD
