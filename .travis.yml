@@ -1,11 +1,15 @@
-sudo: required
+os:
+  - linux
+  - osx
+
+addons:
+  apt:
+    sources:
+      - kubuntu-backports
+    packages:
+      - cmake
 
 language: c
-
-install:
-  - sudo add-apt-repository ppa:kubuntu-ppa/backports -y
-  - sudo apt-get update
-  - sudo apt-get install --only-upgrade cmake
 
 script:
   - mkdir _build
