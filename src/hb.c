@@ -259,7 +259,7 @@ void heartbeat(heartbeat_context* hb,
                uint64_t end_time) {
   heartbeat_record* old_record;
 #endif
-  if (hb == NULL) {
+  if (hb == NULL || hb->window_buffer == NULL) {
     errno = EINVAL;
     return;
   }

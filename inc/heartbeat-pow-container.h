@@ -23,7 +23,8 @@ typedef struct heartbeat_pow_container {
 
 /**
  * Allocate the window buffer.
- * Sets errno on failure.
+ * Only fails if hc is NULL, window_size is 0, or the window buffer cannot be
+ * allocated, in which cases errno is set.
  *
  * @param hc
  * @param window_size
@@ -34,7 +35,8 @@ int heartbeat_pow_container_init(heartbeat_pow_container* hc,
 
 /**
  * Convenience function to initialize the container and the heartbeat context.
- * Sets errno on failure.
+ * Only fails if hc is NULL, window_size is 0, or the window buffer cannot be
+ * allocated, in which cases errno is set.
  *
  * @param hc
  * @param window_size

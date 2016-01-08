@@ -43,8 +43,8 @@ typedef struct heartbeat_context {
 
 /**
  * Initialize a heartbeats instance.
- * Sets errno on failure.
- * Only fails if hb is NULL, window_size is 0, or window_buffer is NULL.
+ * Only fails if hb is NULL, window_size is 0, or window_buffer is NULL, in
+ * which cases errno is set to EINVAL.
  *
  * @param hb
  * @param window_size
@@ -61,6 +61,7 @@ int heartbeat_init(heartbeat_context* hb,
 
 /**
  * Registers a heartbeat.
+ * If hb is NULL or its window_buffer is NULL, errno is set to EINVAL.
  *
  * @param hb
  * @param user_tag
@@ -94,89 +95,97 @@ int hb_log_header(int fd);
 int hb_log_window_buffer(const heartbeat_context* hb, int fd);
 
 /**
- * Returns the size of the sliding window used to compute the current heart
- * rate
+ * Get the size of the window buffer.
+ * If hb is NULL, 0 is returned and errno is set to EINVAL.
  *
- * @param hb pointer to heartbeat_t
- * @return the size of the sliding window (uint64_t)
+ * @param hb
+ * @return the size of the window
  */
 uint64_t hb_get_window_size(const heartbeat_context* hb);
 
 /**
- * Returns the log file descriptor
+ * Get the log file descriptor.
+ * If hb is NULL, -1 is returned and errno is set to EINVAL.
  *
- * @param hb pointer to heartbeat_t
- * @return the log file descriptor (int)
+ * @param hb
+ * @return the log file descriptor
  */
 int hb_get_log_fd(const heartbeat_context* hb);
 
 /**
- * Returns the current user tag
+ * Get the user tag for the last heartbeat.
+ * If hb is NULL, 0 is returned and errno is set to EINVAL.
  *
- * @param hb pointer to heartbeat_t
- * @return the current user tag (uint64_t)
+ * @param hb
+ * @return the user tag
  */
 uint64_t hb_get_user_tag(const heartbeat_context* hb);
 
 /**
- * Get the total time for the life of this heartbeat.
+ * Get the total time (ns) for the life of this heartbeat.
+ * If hb is NULL, 0 is returned and errno is set to EINVAL.
  *
- * @param hb pointer to heartbeat_t
- * @return the total time (uint64_t)
+ * @param hb
+ * @return the total time (ns)
  */
 uint64_t hb_get_global_time(const heartbeat_context* hb);
 
 /**
- * Get the current window time for this heartbeat.
+ * Get the current window time (ns) for this heartbeat.
+ * If hb is NULL, 0 is returned and errno is set to EINVAL.
  *
- * @param hb pointer to heartbeat_t
- * @return the window time (uint64_t)
+ * @param hb
+ * @return the window time (ns)
  */
 uint64_t hb_get_window_time(const heartbeat_context* hb);
 
 /**
  * Get the total work for the life of this heartbeat.
+ * If hb is NULL, 0 is returned and errno is set to EINVAL.
  *
- * @param hb pointer to heartbeat_t
- * @return the total work (uint64_t)
+ * @param hb
+ * @return the total work
  */
 uint64_t hb_get_global_work(const heartbeat_context* hb);
 
 /**
  * Get the current window work for this heartbeat.
+ * If hb is NULL, 0 is returned and errno is set to EINVAL.
  *
- * @param hb pointer to heartbeat_t
- * @return the window work (uint64_t)
+ * @param hb
+ * @return the window work
  */
 uint64_t hb_get_window_work(const heartbeat_context* hb);
 
 /**
- * Returns the performance over the life of the entire application
+ * Get the performance over the life of this heartbeat.
+ * If hb is NULL, 0 is returned and errno is set to EINVAL.
  *
- * @param hb pointer to heartbeat_t
- * @return the performance (double) over the entire life of the application
+ * @param hb
+ * @return the performance over the life of this heartbeat
  */
 double hb_get_global_perf(const heartbeat_context* hb);
 
 /**
- * Returns the performance over the last window (as specified to init)
- * heartbeats
+ * Get the performance over the last window for this heartbeat.
+ * If hb is NULL, 0 is returned and errno is set to EINVAL.
  *
- * @param hb pointer to heartbeat_t
- * @return the performance (double) over the last window
+ * @param hb
+ * @return the performance over the last window
  */
 double hb_get_window_perf(const heartbeat_context* hb);
 
 /**
- * Returns the performance for the last heartbeat.
+ * Get the performance for the last heartbeat.
+ * If hb is NULL, 0 is returned and errno is set to EINVAL.
  *
- * @param hb pointer to heartbeat_t
- * @return the performance (double) for the last heartbeat
+ * @param hb
+ * @return the performance for the last heartbeat
  */
 double hb_get_instant_perf(const heartbeat_context* hb);
 
 #ifdef __cplusplus
- }
+}
 #endif
 
 #endif

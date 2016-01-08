@@ -4,7 +4,7 @@
  *
  * @author Connor Imes
  */
-
+#include <errno.h>
 #include <inttypes.h>
 #include <stdlib.h>
 
@@ -28,7 +28,11 @@ uint64_t hb_acc_pow_get_window_size(const heartbeat_acc_pow_context* hb) {
 #else
 uint64_t hb_get_window_size(const heartbeat_context* hb) {
 #endif
-  return hb == NULL ? 0 : hb->ws.window_size;
+  if (hb == NULL) {
+    errno = EINVAL;
+    return 0;
+  }
+  return hb->ws.window_size;
 }
 
 #if defined(HEARTBEAT_MODE_ACC)
@@ -40,7 +44,11 @@ int hb_acc_pow_get_log_fd(const heartbeat_acc_pow_context* hb) {
 #else
 int hb_get_log_fd(const heartbeat_context* hb) {
 #endif
-  return hb == NULL ? -1 : hb->ws.log_fd;
+  if (hb == NULL) {
+    errno = EINVAL;
+    return -1;
+  }
+  return hb->ws.log_fd;
 }
 
 #if defined(HEARTBEAT_MODE_ACC)
@@ -52,7 +60,11 @@ uint64_t hb_acc_pow_get_user_tag(const heartbeat_acc_pow_context* hb) {
 #else
 uint64_t hb_get_user_tag(const heartbeat_context* hb) {
 #endif
-  return hb == NULL ? 0 : hb->window_buffer[hb->ws.read_index].user_tag;
+  if (hb == NULL) {
+    errno = EINVAL;
+    return 0;
+  }
+  return hb->window_buffer[hb->ws.read_index].user_tag;
 }
 
 #if defined(HEARTBEAT_MODE_ACC)
@@ -64,7 +76,11 @@ uint64_t hb_acc_pow_get_global_time(const heartbeat_acc_pow_context* hb) {
 #else
 uint64_t hb_get_global_time(const heartbeat_context* hb) {
 #endif
-  return hb == NULL ? 0 : hb->td.global;
+  if (hb == NULL) {
+    errno = EINVAL;
+    return 0;
+  }
+  return hb->td.global;
 }
 
 #if defined(HEARTBEAT_MODE_ACC)
@@ -76,7 +92,11 @@ uint64_t hb_acc_pow_get_window_time(const heartbeat_acc_pow_context* hb) {
 #else
 uint64_t hb_get_window_time(const heartbeat_context* hb) {
 #endif
-  return hb == NULL ? 0 : hb->td.window;
+  if (hb == NULL) {
+    errno = EINVAL;
+    return 0;
+  }
+  return hb->td.window;
 }
 
 #if defined(HEARTBEAT_MODE_ACC)
@@ -88,7 +108,11 @@ uint64_t hb_acc_pow_get_global_work(const heartbeat_acc_pow_context* hb) {
 #else
 uint64_t hb_get_global_work(const heartbeat_context* hb) {
 #endif
-  return hb == NULL ? 0 : hb->wd.global;
+  if (hb == NULL) {
+    errno = EINVAL;
+    return 0;
+  }
+  return hb->wd.global;
 }
 
 #if defined(HEARTBEAT_MODE_ACC)
@@ -100,7 +124,11 @@ uint64_t hb_acc_pow_get_window_work(const heartbeat_acc_pow_context* hb) {
 #else
 uint64_t hb_get_window_work(const heartbeat_context* hb) {
 #endif
-  return hb == NULL ? 0 : hb->wd.window;
+  if (hb == NULL) {
+    errno = EINVAL;
+    return 0;
+  }
+  return hb->wd.window;
 }
 
 #if defined(HEARTBEAT_MODE_ACC)
@@ -112,7 +140,11 @@ double hb_acc_pow_get_global_perf(const heartbeat_acc_pow_context* hb) {
 #else
 double hb_get_global_perf(const heartbeat_context* hb) {
 #endif
-  return hb == NULL ? 0.0 : hb->window_buffer[hb->ws.read_index].perf.global;
+  if (hb == NULL) {
+    errno = EINVAL;
+    return 0.0;
+  }
+  return hb->window_buffer[hb->ws.read_index].perf.global;
 }
 
 #if defined(HEARTBEAT_MODE_ACC)
@@ -124,7 +156,11 @@ double hb_acc_pow_get_window_perf(const heartbeat_acc_pow_context* hb) {
 #else
 double hb_get_window_perf(const heartbeat_context* hb) {
 #endif
-  return hb == NULL ? 0.0 : hb->window_buffer[hb->ws.read_index].perf.window;
+  if (hb == NULL) {
+    errno = EINVAL;
+    return 0.0;
+  }
+  return hb->window_buffer[hb->ws.read_index].perf.window;
 }
 
 #if defined(HEARTBEAT_MODE_ACC)
@@ -136,5 +172,9 @@ double hb_acc_pow_get_instant_perf(const heartbeat_acc_pow_context* hb) {
 #else
 double hb_get_instant_perf(const heartbeat_context* hb) {
 #endif
-  return hb == NULL ? 0.0 : hb->window_buffer[hb->ws.read_index].perf.instant;
+  if (hb == NULL) {
+    errno = EINVAL;
+    return 0.0;
+  }
+  return hb->window_buffer[hb->ws.read_index].perf.instant;
 }
