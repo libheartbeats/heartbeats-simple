@@ -36,7 +36,7 @@ int heartbeat_container_init(heartbeat_container* hc,
                              uint64_t window_size) {
   size_t record_size = sizeof(heartbeat_record);
 #endif
-  if (hc == NULL) {
+  if (hc == NULL || window_size == 0) {
     errno = EINVAL;
     return -1;
   }
@@ -55,14 +55,8 @@ int heartbeat_acc_container_init_context(heartbeat_acc_container* hc,
   if (heartbeat_acc_container_init(hc, window_size)) {
     return -1;
   }
-  if (heartbeat_acc_init(&hc->hb,
-                         window_size,
-                         hc->window_buffer,
-                         log_fd,
-                         hwc_callback)) {
-    heartbeat_acc_container_finish(hc);
-    return -1;
-  }
+  heartbeat_acc_init(&hc->hb, window_size, hc->window_buffer, log_fd,
+                     hwc_callback);
   return 0;
 }
 #elif defined(HEARTBEAT_MODE_POW)
@@ -73,14 +67,8 @@ int heartbeat_pow_container_init_context(heartbeat_pow_container* hc,
   if (heartbeat_pow_container_init(hc, window_size)) {
     return -1;
   }
-  if (heartbeat_pow_init(&hc->hb,
-                         window_size,
-                         hc->window_buffer,
-                         log_fd,
-                         hwc_callback)) {
-    heartbeat_pow_container_finish(hc);
-    return -1;
-  }
+  heartbeat_pow_init(&hc->hb, window_size, hc->window_buffer, log_fd,
+                     hwc_callback);
   return 0;
 }
 #elif defined(HEARTBEAT_MODE_ACC_POW)
@@ -91,14 +79,8 @@ int heartbeat_acc_pow_container_init_context(heartbeat_acc_pow_container* hc,
   if (heartbeat_acc_pow_container_init(hc, window_size)) {
     return -1;
   }
-  if (heartbeat_acc_pow_init(&hc->hb,
-                             window_size,
-                             hc->window_buffer,
-                             log_fd,
-                             hwc_callback)) {
-    heartbeat_acc_pow_container_finish(hc);
-    return -1;
-  }
+  heartbeat_acc_pow_init(&hc->hb, window_size, hc->window_buffer, log_fd,
+                         hwc_callback);
   return 0;
 }
 #else
@@ -109,14 +91,8 @@ int heartbeat_container_init_context(heartbeat_container* hc,
   if (heartbeat_container_init(hc, window_size)) {
     return -1;
   }
-  if (heartbeat_init(&hc->hb,
-                     window_size,
-                     hc->window_buffer,
-                     log_fd,
-                     hwc_callback)) {
-    heartbeat_container_finish(hc);
-    return -1;
-  }
+  heartbeat_init(&hc->hb, window_size, hc->window_buffer, log_fd,
+                 hwc_callback);
   return 0;
 }
 #endif
