@@ -94,115 +94,131 @@ int hb_acc_pow_log_header(int fd) {
 #else
 int hb_log_header(int fd) {
 #endif
-  int ret;
+  int err_save;
   FILE* log = fdopen(dup(fd), "w");
+
   if (log == NULL) {
-    ret = -1;
-  } else {
-    fprintf(log,
-            "%-6s %-6s"
-            " %-11s %-11s %-11s"
-            " %-15s %-15s %-20s %-20s"
-            " %-15s %-15s %-15s",
-            "HB", "Tag",
-            "Global_Work", "Window_Work", "Work",
-            "Global_Time", "Window_Time", "Start_Time", "End_Time",
-            "Global_Perf", "Window_Perf", "Instant_Perf");
+    return errno;
+  }
+
+  errno = 0;
+  fprintf(log,
+          "%-6s %-6s"
+          " %-11s %-11s %-11s"
+          " %-15s %-15s %-20s %-20s"
+          " %-15s %-15s %-15s"
 #if defined(HEARTBEAT_USE_ACC)
-    fprintf(log,
-            " %-11s %-11s %-11s"
-            " %-16s %-16s %-16s",
-            "Global_Acc", "Window_Acc", "Acc",
-            "Global_Acc_Rate", "Window_Acc_Rate", "Instant_Acc_Rate");
+          " %-11s %-11s %-11s"
+          " %-16s %-16s %-16s"
 #endif
 #if defined(HEARTBEAT_USE_POW)
-    fprintf(log,
-            " %-15s %-15s %-15s %-15s"
-            " %-15s %-15s %-15s",
-            "Global_Energy", "Window_Energy", "Start_Energy", "End_Energy",
-            "Global_Pwr", "Window_Pwr", "Instant_Pwr");
+          " %-15s %-15s %-15s %-15s"
+          " %-15s %-15s %-15s"
 #endif
-    fprintf(log, "\n");
-    ret = fclose(log);
-  }
-  return ret;
+          "\n",
+          "HB", "Tag",
+          "Global_Work", "Window_Work", "Work",
+          "Global_Time", "Window_Time", "Start_Time", "End_Time",
+          "Global_Perf", "Window_Perf", "Instant_Perf"
+#if defined(HEARTBEAT_USE_ACC)
+          ,
+          "Global_Acc", "Window_Acc", "Acc",
+          "Global_Acc_Rate", "Window_Acc_Rate", "Instant_Acc_Rate"
+#endif
+#if defined(HEARTBEAT_USE_POW)
+          ,
+          "Global_Energy", "Window_Energy", "Start_Energy", "End_Energy",
+          "Global_Pwr", "Window_Pwr", "Instant_Pwr"
+#endif
+  );
+  err_save = errno;
+  fclose(log);
+  // preserve first error
+  errno = err_save ? err_save : errno;
+  return errno;
 }
 
 #if defined(HEARTBEAT_MODE_ACC)
-int hb_acc_log_window_buffer(const heartbeat_acc_context* hb,
-                             int fd) {
+int hb_acc_log_window_buffer(const heartbeat_acc_context* hb, int fd) {
 #elif defined(HEARTBEAT_MODE_POW)
-int hb_pow_log_window_buffer(const heartbeat_pow_context* hb,
-                             int fd) {
+int hb_pow_log_window_buffer(const heartbeat_pow_context* hb, int fd) {
 #elif defined(HEARTBEAT_MODE_ACC_POW)
-int hb_acc_pow_log_window_buffer(const heartbeat_acc_pow_context* hb,
-                                 int fd) {
+int hb_acc_pow_log_window_buffer(const heartbeat_acc_pow_context* hb, int fd) {
 #else
-int hb_log_window_buffer(const heartbeat_context* hb,
-                         int fd) {
+int hb_log_window_buffer(const heartbeat_context* hb, int fd) {
 #endif
   if (hb == NULL) {
     errno = EINVAL;
-    return -1;
+    return errno;
   }
 
-  int ret;
+  int err_save;
   uint64_t i;
   FILE* log = fdopen(dup(fd), "w");
+
   if (log == NULL) {
-    ret = -1;
-  } else {
-    for (i = 0; i < hb->ws.buffer_index; i++) {
-      fprintf(log,
-              "%-6"PRIu64" %-6"PRIu64
-              " %-11"PRIu64" %-11"PRIu64" %-11"PRIu64
-              " %-15"PRIu64" %-15"PRIu64" %-20"PRIu64" %-20"PRIu64
-              " %-15.6f %-15.6f %-15.6f",
-              hb->window_buffer[i].id,
-              hb->window_buffer[i].user_tag,
+    return errno;
+  }
 
-              hb->window_buffer[i].wd.global,
-              hb->window_buffer[i].wd.window,
-              hb->window_buffer[i].work,
-
-              hb->window_buffer[i].td.global,
-              hb->window_buffer[i].td.window,
-              hb->window_buffer[i].start_time,
-              hb->window_buffer[i].end_time,
-
-              hb->window_buffer[i].perf.global,
-              hb->window_buffer[i].perf.window,
-              hb->window_buffer[i].perf.window);
+  errno = 0;
+  for (i = 0; i < hb->ws.buffer_index && !errno; i++) {
+    fprintf(log,
+            "%-6"PRIu64" %-6"PRIu64
+            " %-11"PRIu64" %-11"PRIu64" %-11"PRIu64
+            " %-15"PRIu64" %-15"PRIu64" %-20"PRIu64" %-20"PRIu64
+            " %-15.6f %-15.6f %-15.6f"
 #if defined(HEARTBEAT_USE_ACC)
-      fprintf(log,
-              " %-11"PRIu64" %-11"PRIu64" %-11"PRIu64
-              " %-16.6f %-16.6f %-16.6f",
-              hb->window_buffer[i].ad.global,
-              hb->window_buffer[i].ad.window,
-              hb->window_buffer[i].accuracy,
-
-              hb->window_buffer[i].acc.global,
-              hb->window_buffer[i].acc.window,
-              hb->window_buffer[i].acc.instant);
+            " %-11"PRIu64" %-11"PRIu64" %-11"PRIu64
+            " %-16.6f %-16.6f %-16.6f"
 #endif
 #if defined(HEARTBEAT_USE_POW)
-      fprintf(log,
-              " %-15"PRIu64" %-15"PRIu64" %-15"PRIu64" %-15"PRIu64
-              " %-15.6f %-15.6f %-15.6f",
-              hb->window_buffer[i].ed.global,
-              hb->window_buffer[i].ed.window,
-              hb->window_buffer[i].start_energy,
-              hb->window_buffer[i].end_energy,
-
-              hb->window_buffer[i].pwr.global,
-              hb->window_buffer[i].pwr.window,
-              hb->window_buffer[i].pwr.instant);
+            " %-15"PRIu64" %-15"PRIu64" %-15"PRIu64" %-15"PRIu64
+            " %-15.6f %-15.6f %-15.6f"
 #endif
-      fprintf(log,"\n");
-    }
-    ret = fclose(log);
+            "\n",
+            hb->window_buffer[i].id,
+            hb->window_buffer[i].user_tag,
+
+            hb->window_buffer[i].wd.global,
+            hb->window_buffer[i].wd.window,
+            hb->window_buffer[i].work,
+
+            hb->window_buffer[i].td.global,
+            hb->window_buffer[i].td.window,
+            hb->window_buffer[i].start_time,
+            hb->window_buffer[i].end_time,
+
+            hb->window_buffer[i].perf.global,
+            hb->window_buffer[i].perf.window,
+            hb->window_buffer[i].perf.window
+#if defined(HEARTBEAT_USE_ACC)
+            ,
+            hb->window_buffer[i].ad.global,
+            hb->window_buffer[i].ad.window,
+            hb->window_buffer[i].accuracy,
+
+            hb->window_buffer[i].acc.global,
+            hb->window_buffer[i].acc.window,
+            hb->window_buffer[i].acc.instant
+#endif
+#if defined(HEARTBEAT_USE_POW)
+            ,
+            hb->window_buffer[i].ed.global,
+            hb->window_buffer[i].ed.window,
+            hb->window_buffer[i].start_energy,
+            hb->window_buffer[i].end_energy,
+
+            hb->window_buffer[i].pwr.global,
+            hb->window_buffer[i].pwr.window,
+            hb->window_buffer[i].pwr.instant
+#endif
+    );
   }
-  return ret;
+  err_save = errno;
+  fclose(log);
+  // preserve first error
+  errno = err_save ? err_save : errno;
+  return errno;
 }
 
 #define ONE_MILLION 1000000.0
@@ -308,14 +324,16 @@ void heartbeat(heartbeat_context* hb,
   if (hb->ws.buffer_index % hb->ws.window_size == 0) {
     if (hb->ws.log_fd > 0) {
 #if defined(HEARTBEAT_MODE_ACC)
-      hb_acc_log_window_buffer(hb, hb->ws.log_fd);
+      if (hb_acc_log_window_buffer(hb, hb->ws.log_fd)) {
 #elif defined(HEARTBEAT_MODE_POW)
-      hb_pow_log_window_buffer(hb, hb->ws.log_fd);
+      if (hb_pow_log_window_buffer(hb, hb->ws.log_fd)) {
 #elif defined(HEARTBEAT_MODE_ACC_POW)
-      hb_acc_pow_log_window_buffer(hb, hb->ws.log_fd);
+      if (hb_acc_pow_log_window_buffer(hb, hb->ws.log_fd)) {
 #else
-      hb_log_window_buffer(hb, hb->ws.log_fd);
+      if (hb_log_window_buffer(hb, hb->ws.log_fd)) {
 #endif
+        perror("Failed to log heartbeat record data");
+      }
     }
     if (hb->hwc_callback != NULL) {
       (*hb->hwc_callback)(hb);
