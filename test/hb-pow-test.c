@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include "heartbeat-pow.h"
 
-int main(int argc, char** argv) {
+int main(void) {
   uint64_t window_size = 20;
   heartbeat_pow_context hb;
   heartbeat_pow_record* window_buffer = malloc(window_size * sizeof(heartbeat_pow_record));

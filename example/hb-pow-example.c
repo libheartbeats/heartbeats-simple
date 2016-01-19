@@ -13,9 +13,12 @@
 #include <unistd.h>
 #include "heartbeat-pow.h"
 
+#define UNUSED(x) (void)(x)
+
 // Callback function for when a window is complete (window buffer is full)
 void window_complete(const heartbeat_pow_context* hb) {
   // dummy function
+  UNUSED(hb);
 }
 
 // Simulate energy readings
@@ -42,10 +45,10 @@ static inline uint64_t get_time() {
   return ts.tv_sec * 1000000000 + ts.tv_nsec;
 }
 
-int main(int argc, char** argv) {
+int main(void) {
   uint64_t i;
-  const int iterations = 10;
-  const int window_size = 5;
+  const unsigned int iterations = 10;
+  const uint64_t window_size = 5;
   uint64_t start_time, end_time;
   uint64_t start_energy, end_energy;
   int fd = fileno(stdout);
