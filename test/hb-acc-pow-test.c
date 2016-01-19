@@ -124,7 +124,9 @@ void test_two_hb() {
 
 int received_cb = 0;
 void callback(const heartbeat_acc_pow_context* hb) {
-  received_cb++;
+  if (hb != NULL) {
+    received_cb++;
+  }
 }
 
 /**
@@ -199,7 +201,7 @@ void test_bad_arguments() {
   free(window_buffer);
 }
 
-int main(int argc, char** argv) {
+int main(void) {
   test_functions_exist();
   test_two_hb();
   test_callback();

@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include "heartbeat-acc-container.h"
 
-int main(int argc, char** argv) {
+int main(void) {
   uint64_t window_size = 20;
   heartbeat_acc_container hc;
 
