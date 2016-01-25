@@ -7,6 +7,11 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wno-unknown-pragmas -Wextra -pedantic
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
 
+# Build shared objects by default
+if(NOT DEFINED BUILD_SHARED_LIBS)
+  set(BUILD_SHARED_LIBS TRUE CACHE STRING "Whether to build shared or static libs")
+endif()
+
 include_directories(${PROJECT_SOURCE_DIR}/inc)
 
 # Libraries
@@ -22,22 +27,15 @@ set(HBS_ACC_POW_PROP HEARTBEAT_MODE_ACC_POW;HEARTBEAT_USE_ACC;HEARTBEAT_USE_POW)
 set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 
 add_library(hbs SHARED ${HBS_SRC})
-add_library(hbs-static STATIC ${HBS_SRC})
 
 add_library(hbs-acc SHARED ${HBS_ACC_SRC})
 set_target_properties(hbs-acc PROPERTIES COMPILE_DEFINITIONS "${HBS_ACC_PROP}")
-add_library(hbs-acc-static STATIC ${HBS_ACC_SRC})
-set_target_properties(hbs-acc-static PROPERTIES COMPILE_DEFINITIONS "${HBS_ACC_PROP}")
 
 add_library(hbs-pow SHARED ${HBS_POW_SRC})
 set_target_properties(hbs-pow PROPERTIES COMPILE_DEFINITIONS "${HBS_POW_PROP}")
-add_library(hbs-pow-static STATIC ${HBS_POW_SRC})
-set_target_properties(hbs-pow-static PROPERTIES COMPILE_DEFINITIONS "${HBS_POW_PROP}")
 
 add_library(hbs-acc-pow SHARED ${HBS_ACC_POW_SRC})
 set_target_properties(hbs-acc-pow PROPERTIES COMPILE_DEFINITIONS "${HBS_ACC_POW_PROP}")
-add_library(hbs-acc-pow-static STATIC ${HBS_ACC_POW_SRC})
-set_target_properties(hbs-acc-pow-static PROPERTIES COMPILE_DEFINITIONS "${HBS_ACC_POW_PROP}")
 
 # Examples
 
@@ -106,12 +104,6 @@ configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig.in"
   "${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/hbs.pc"
 )
-set(PKG_CONFIG_NAME "heartbeats-simple-static")
-set(PKG_CONFIG_LIBS "-L\${libdir} -lhbs-static")
-configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/hbs-static.pc"
-)
 
 set(PKG_CONFIG_NAME "heartbeats-simple-acc")
 set(PKG_CONFIG_DESCRIPTION "Simple performance monitoring API with accuracy tracking")
@@ -119,12 +111,6 @@ set(PKG_CONFIG_LIBS "-L\${libdir} -lhbs-acc")
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig.in"
   "${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/hbs-acc.pc"
-)
-set(PKG_CONFIG_NAME "heartbeats-simple-acc-static")
-set(PKG_CONFIG_LIBS "-L\${libdir} -lhbs-acc-static")
-configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/hbs-acc-static.pc"
 )
 
 set(PKG_CONFIG_NAME "heartbeats-simple-pow")
@@ -134,12 +120,6 @@ configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig.in"
   "${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/hbs-pow.pc"
 )
-set(PKG_CONFIG_NAME "heartbeats-simple-pow-static")
-set(PKG_CONFIG_LIBS "-L\${libdir} -lhbs-pow-static")
-configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/hbs-pow-static.pc"
-)
 
 set(PKG_CONFIG_NAME "heartbeats-simple-acc-pow")
 set(PKG_CONFIG_DESCRIPTION "Simple performance monitoring API with accuracy and power/energy tracking")
@@ -148,17 +128,10 @@ configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig.in"
   "${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/hbs-acc-pow.pc"
 )
-set(PKG_CONFIG_NAME "heartbeats-simple-acc-pow-static")
-set(PKG_CONFIG_LIBS "-L\${libdir} -lhbs-acc-pow-static")
-configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/hbs-acc-pow-static.pc"
-)
 
 # Install
 
 install(TARGETS hbs hbs-acc hbs-pow hbs-acc-pow DESTINATION lib)
-install(TARGETS hbs-static hbs-acc-static hbs-pow-static hbs-acc-pow-static DESTINATION lib)
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/inc/ DESTINATION include/${PROJECT_NAME})
 install(DIRECTORY ${CMAKE_BINARY_DIR}/pkgconfig/ DESTINATION lib/pkgconfig)
 
