@@ -26,15 +26,15 @@ set(HBS_ACC_POW_PROP HEARTBEAT_MODE_ACC_POW;HEARTBEAT_USE_ACC;HEARTBEAT_USE_POW)
 # force fPIC on static libs
 set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 
-add_library(hbs SHARED ${HBS_SRC})
+add_library(hbs ${HBS_SRC})
 
-add_library(hbs-acc SHARED ${HBS_ACC_SRC})
+add_library(hbs-acc ${HBS_ACC_SRC})
 set_target_properties(hbs-acc PROPERTIES COMPILE_DEFINITIONS "${HBS_ACC_PROP}")
 
-add_library(hbs-pow SHARED ${HBS_POW_SRC})
+add_library(hbs-pow ${HBS_POW_SRC})
 set_target_properties(hbs-pow PROPERTIES COMPILE_DEFINITIONS "${HBS_POW_PROP}")
 
-add_library(hbs-acc-pow SHARED ${HBS_ACC_POW_SRC})
+add_library(hbs-acc-pow ${HBS_ACC_POW_SRC})
 set_target_properties(hbs-acc-pow PROPERTIES COMPILE_DEFINITIONS "${HBS_ACC_POW_PROP}")
 
 # Examples
