@@ -1,6 +1,6 @@
 # Simple Heartbeats
 
-This library provides simplified performance, accuracy, and power monitoring.
+These libraries provide simplified performance, accuracy, and power monitoring.
 
 See
 [https://github.com/libheartbeats/heartbeats](https://github.com/libheartbeats/heartbeats)
@@ -18,6 +18,12 @@ mkdir _build
 cd _build
 cmake ..
 make
+```
+
+To build static libraries instead of shared objects, turn off `BUILD_SHARED_LIBS` when running `cmake`:
+
+``` sh
+cmake .. -DBUILD_SHARED_LIBS=false
 ```
 
 ## Installing
@@ -40,12 +46,4 @@ privileges:
 
 ``` sh
 make uninstall
-```
-
-## Cleaning
-
-To cleanup build artifacts, run
-
-``` sh
-make clean
 ```

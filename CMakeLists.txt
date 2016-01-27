@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8.9)
 project(heartbeats-simple)
 set(PROJECT_VERSION 0.2.1)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wno-unknown-pragmas -Wextra -pedantic -pedantic-errors -std=gnu99")
+list(APPEND CMAKE_C_FLAGS "-Wall -Wno-unknown-pragmas -Wextra -pedantic -pedantic-errors -std=gnu99")
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
 
@@ -14,28 +14,21 @@ endif()
 
 include_directories(${PROJECT_SOURCE_DIR}/inc)
 
-# Libraries
-
-set(HBS_SRC src/hb.c src/hb-util.c src/hb-container.c)
-set(HBS_ACC_SRC src/hb.c src/hb-util.c src/hb-acc-util.c src/hb-container.c)
-set(HBS_ACC_PROP HEARTBEAT_MODE_ACC;HEARTBEAT_USE_ACC)
-set(HBS_POW_SRC src/hb.c src/hb-util.c src/hb-pow-util.c src/hb-container.c)
-set(HBS_POW_PROP HEARTBEAT_MODE_POW;HEARTBEAT_USE_POW)
-set(HBS_ACC_POW_SRC src/hb.c src/hb-util.c src/hb-acc-util.c src/hb-pow-util.c src/hb-container.c)
-set(HBS_ACC_POW_PROP HEARTBEAT_MODE_ACC_POW;HEARTBEAT_USE_ACC;HEARTBEAT_USE_POW)
 # force fPIC on static libs
 set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 
-add_library(hbs ${HBS_SRC})
+# Libraries
 
-add_library(hbs-acc ${HBS_ACC_SRC})
-set_target_properties(hbs-acc PROPERTIES COMPILE_DEFINITIONS "${HBS_ACC_PROP}")
+add_library(hbs src/hb.c src/hb-util.c src/hb-container.c)
 
-add_library(hbs-pow ${HBS_POW_SRC})
-set_target_properties(hbs-pow PROPERTIES COMPILE_DEFINITIONS "${HBS_POW_PROP}")
+add_library(hbs-acc src/hb.c src/hb-util.c src/hb-acc-util.c src/hb-container.c)
+set_target_properties(hbs-acc PROPERTIES COMPILE_DEFINITIONS "HEARTBEAT_MODE_ACC;HEARTBEAT_USE_ACC")
 
-add_library(hbs-acc-pow ${HBS_ACC_POW_SRC})
-set_target_properties(hbs-acc-pow PROPERTIES COMPILE_DEFINITIONS "${HBS_ACC_POW_PROP}")
+add_library(hbs-pow src/hb.c src/hb-util.c src/hb-pow-util.c src/hb-container.c)
+set_target_properties(hbs-pow PROPERTIES COMPILE_DEFINITIONS "HEARTBEAT_MODE_POW;HEARTBEAT_USE_POW")
+
+add_library(hbs-acc-pow src/hb.c src/hb-util.c src/hb-acc-util.c src/hb-pow-util.c src/hb-container.c)
+set_target_properties(hbs-acc-pow PROPERTIES COMPILE_DEFINITIONS "HEARTBEAT_MODE_ACC_POW;HEARTBEAT_USE_ACC;HEARTBEAT_USE_POW")
 
 # Examples
 
@@ -101,32 +94,32 @@ set(PKG_CONFIG_NAME "heartbeats-simple")
 set(PKG_CONFIG_DESCRIPTION "Simple performance monitoring API")
 set(PKG_CONFIG_LIBS "-L\${libdir} -lhbs")
 configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/hbs.pc"
+  ${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig.in
+  ${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/hbs.pc
 )
 
 set(PKG_CONFIG_NAME "heartbeats-simple-acc")
 set(PKG_CONFIG_DESCRIPTION "Simple performance monitoring API with accuracy tracking")
 set(PKG_CONFIG_LIBS "-L\${libdir} -lhbs-acc")
 configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/hbs-acc.pc"
+  ${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig.in
+  ${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/hbs-acc.pc
 )
 
 set(PKG_CONFIG_NAME "heartbeats-simple-pow")
 set(PKG_CONFIG_DESCRIPTION "Simple performance monitoring API with power/energy tracking")
 set(PKG_CONFIG_LIBS "-L\${libdir} -lhbs-pow")
 configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/hbs-pow.pc"
+  ${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig.in
+  ${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/hbs-pow.pc
 )
 
 set(PKG_CONFIG_NAME "heartbeats-simple-acc-pow")
 set(PKG_CONFIG_DESCRIPTION "Simple performance monitoring API with accuracy and power/energy tracking")
 set(PKG_CONFIG_LIBS "-L\${libdir} -lhbs-acc-pow")
 configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/hbs-acc-pow.pc"
+  ${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig.in
+  ${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/hbs-acc-pow.pc
 )
 
 # Install
@@ -138,8 +131,9 @@ install(DIRECTORY ${CMAKE_BINARY_DIR}/pkgconfig/ DESTINATION lib/pkgconfig)
 # Uninstall
 
 configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
-    IMMEDIATE @ONLY)
+  ${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake
+  @ONLY
+)
 
 add_custom_target(uninstall COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
