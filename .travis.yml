@@ -16,3 +16,4 @@ script:
   - cd _build
   - cmake ..
   - make
+  - make test

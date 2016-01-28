@@ -61,9 +61,7 @@ add_executable(hb-acc-pow-container-test test/hb-acc-pow-container-test.c)
 target_link_libraries(hb-acc-pow-container-test hbs-acc-pow)
 
 enable_testing()
-
 macro(add_unit_test target)
-  set(UNIT_TEST_TARGETS ${UNIT_TEST_TARGETS} ${target})
   add_test(${target} ${EXECUTABLE_OUTPUT_PATH}/${target})
 endmacro(add_unit_test)
 
@@ -76,12 +74,6 @@ add_unit_test(hb-container-test)
 add_unit_test(hb-acc-container-test)
 add_unit_test(hb-pow-container-test)
 add_unit_test(hb-acc-pow-container-test)
-
-add_custom_target(AllTests ALL DEPENDS ${UNIT_TEST_TARGETS})
-add_custom_command(TARGET AllTests POST_BUILD
-                   COMMAND ctest ARGS --output-on-failure
-                   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-                   COMMENT "Running unit tests...")
 
 # pkg-config
 
