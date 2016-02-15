@@ -34,11 +34,6 @@ set_target_properties(hbs-acc-pow PROPERTIES COMPILE_DEFINITIONS "HEARTBEAT_MODE
 
 add_executable(hb-pow-example example/hb-pow-example.c)
 target_link_libraries(hb-pow-example hbs-pow)
-find_library(LIBRT NAMES rt)
-if(LIBRT)
-  # no librt on Mac ("Darwin") or Android
-  target_link_libraries(hb-pow-example rt)
-endif()
 
 # Tests
 

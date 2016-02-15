@@ -3,12 +3,6 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
-#include <sys/time.h>
-#ifdef __MACH__
-#include <mach/clock.h>
-#include <mach/mach.h>
-#endif
 #include <inttypes.h>
 #include <unistd.h>
 #include "heartbeat-pow.h"
@@ -21,28 +15,47 @@ void window_complete(const heartbeat_pow_context* hb) {
   UNUSED(hb);
 }
 
-// Simulate energy readings
-static inline uint64_t get_energy() {
-  static uint64_t energy = 0;
-  return energy += 1000;
-}
-
-// get time from the system in nanoseconds
-static inline uint64_t get_time() {
-  struct timespec ts;
+// A real implementation might use one of the following time functions:
+/*
 #ifdef __MACH__
+#include <mach/clock.h>
+#include <mach/mach.h>
+#include <time.h>
+#include <sys/time.h>
+static inline uint64_t get_time() {
   // OS X does not have clock_gettime, use clock_get_time
   clock_serv_t cclock;
   mach_timespec_t mts;
   host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
   clock_get_time(cclock, &mts);
   mach_port_deallocate(mach_task_self(), cclock);
-  ts.tv_sec = mts.tv_sec;
-  ts.tv_nsec = mts.tv_nsec;
+  return mts.tv_sec * 1000000000 + mts.tv_nsec;
+}
 #else
+#include <time.h>
+#include <sys/time.h>
+static inline uint64_t get_time() {
+  // may require dependency on librt, depending on system
+  struct timespec ts;
   clock_gettime(CLOCK_REALTIME, &ts);
-#endif
   return ts.tv_sec * 1000000000 + ts.tv_nsec;
+}
+#endif
+*/
+
+/*
+ * Simulate time/energy readings.
+ * In reality, these are platform-specific operations.
+ */
+
+static inline uint64_t get_time() {
+  static uint64_t time = 0;
+  return time += 1000000;
+}
+
+static inline uint64_t get_energy() {
+  static uint64_t energy = 0;
+  return energy += 1000;
 }
 
 int main(void) {
