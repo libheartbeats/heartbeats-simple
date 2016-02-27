@@ -1,6 +1,8 @@
 /**
  * Unit tests. hb-acc-pow covers hb, hb-acc, and hb-pow due to shared code.
  */
+// force assertions
+#undef NDEBUG
 #include <assert.h>
 #include <inttypes.h>
 #include <stdlib.h>

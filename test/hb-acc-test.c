@@ -1,7 +1,6 @@
 /**
  * Just tests that the functions are all there.
  */
-#include <assert.h>
 #include <inttypes.h>
 #include <stdlib.h>
 #include "heartbeat-acc.h"
@@ -10,7 +9,6 @@ int main(void) {
   uint64_t window_size = 20;
   heartbeat_acc_context hb;
   heartbeat_acc_record* window_buffer = malloc(window_size * sizeof(heartbeat_acc_record));
-  assert(window_buffer);
   heartbeat_acc_init(&hb, window_size, window_buffer, -1, NULL);
   heartbeat_acc(&hb, 0, 1, 0, 1000000000, 1);
   hb_acc_log_header(1);
