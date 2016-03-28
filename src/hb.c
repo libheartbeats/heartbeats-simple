@@ -190,7 +190,7 @@ int hb_log_window_buffer(const heartbeat_context* hb, int fd) {
 
             hb->window_buffer[i].perf.global,
             hb->window_buffer[i].perf.window,
-            hb->window_buffer[i].perf.window
+            hb->window_buffer[i].perf.instant
 #if defined(HEARTBEAT_USE_ACC)
             ,
             hb->window_buffer[i].ad.global,
