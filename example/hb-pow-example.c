@@ -4,7 +4,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <inttypes.h>
+#if defined(_WIN32)
+#include <windows.h>
+#else
 #include <unistd.h>
+#endif
 #include "heartbeat-pow.h"
 
 #define UNUSED(x) (void)(x)
@@ -22,7 +26,7 @@ void window_complete(const heartbeat_pow_context* hb) {
 #include <mach/mach.h>
 #include <time.h>
 #include <sys/time.h>
-static inline uint64_t get_time() {
+static uint64_t get_time() {
   // OS X does not have clock_gettime, use clock_get_time
   clock_serv_t cclock;
   mach_timespec_t mts;
@@ -34,7 +38,7 @@ static inline uint64_t get_time() {
 #else
 #include <time.h>
 #include <sys/time.h>
-static inline uint64_t get_time() {
+static uint64_t get_time() {
   // may require dependency on librt, depending on system
   struct timespec ts;
   clock_gettime(CLOCK_REALTIME, &ts);
@@ -48,14 +52,22 @@ static inline uint64_t get_time() {
  * In reality, these are platform-specific operations.
  */
 
-static inline uint64_t get_time() {
+static uint64_t get_time() {
   static uint64_t time = 0;
   return time += 1000000;
 }
 
-static inline uint64_t get_energy() {
+static uint64_t get_energy() {
   static uint64_t energy = 0;
   return energy += 1000;
+}
+
+static void sleep_one() {
+#if defined(_WIN32)
+  Sleep(1);
+#else
+  usleep(1000);
+#endif
 }
 
 int main(void) {
@@ -80,7 +92,7 @@ int main(void) {
   for(i = 0; i < iterations; i++) {
     start_time = get_time();
     start_energy = get_energy();
-    usleep(1000);
+    sleep_one();
     end_time = get_time();
     end_energy = get_energy();
     heartbeat_pow(&hb, i, 1, start_time, end_time, start_energy, end_energy);
@@ -92,7 +104,7 @@ int main(void) {
   for(i = 0; i < iterations; i++) {
     start_time = end_time;
     start_energy = end_energy;
-    usleep(1000);
+    sleep_one();
     end_time = get_time();
     end_energy = get_energy();
     heartbeat_pow(&hb, i, 1, start_time, end_time, start_energy, end_energy);

@@ -1,6 +1,6 @@
 # Simple Heartbeats
 
-These libraries provide simplified performance, accuracy, and power monitoring.
+Provides simplified performance, accuracy, and power tracking.
 
 See
 [https://github.com/libheartbeats/heartbeats](https://github.com/libheartbeats/heartbeats)
@@ -11,19 +11,13 @@ energy readers automatically.
 
 This project uses CMake.
 
-To build all libraries, run:
+To build, run:
 
 ``` sh
 mkdir _build
 cd _build
 cmake ..
 make
-```
-
-To build static libraries instead of shared objects, turn off `BUILD_SHARED_LIBS` when running `cmake`:
-
-``` sh
-cmake .. -DBUILD_SHARED_LIBS=false
 ```
 
 ## Installing
@@ -35,7 +29,7 @@ make install
 ```
 
 On Linux, installation typically places libraries in `/usr/local/lib` and
-header files in `/usr/local/include/heartbeats-simple`.
+header files in `/usr/local/include`.
 
 ## Uninstalling
 
