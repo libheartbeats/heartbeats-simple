@@ -7,8 +7,10 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 
 include_directories(${PROJECT_SOURCE_DIR}/inc)
 
-# force fPIC (not automatically forwarded through OBJECT libraries when BUILD_SHARED_LIBS is set)
-set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
+# force fPIC unless overridden (not automatically forwarded through OBJECT libraries when BUILD_SHARED_LIBS is set)
+if (NOT DEFINED CMAKE_POSITION_INDEPENDENT_CODE)
+  set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
+endif()
 
 # Libraries
 
