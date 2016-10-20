@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.9)
 
 project(heartbeats-simple)
-set(PROJECT_VERSION 0.3.0)
+set(PROJECT_VERSION 0.3.1)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 
