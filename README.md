@@ -22,7 +22,7 @@ make
 
 ## Installing
 
-To install all libraries and headers, run with proper privileges:
+To install, run with proper privileges:
 
 ``` sh
 make install
@@ -35,8 +35,7 @@ header files in `/usr/local/include`.
 
 Install must be run before uninstalling in order to have a manifest.
 
-To remove libraries and headers installed to the system, run with proper
-privileges:
+To uninstall, run with proper privileges:
 
 ``` sh
 make uninstall
