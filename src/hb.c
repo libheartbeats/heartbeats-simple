@@ -11,7 +11,7 @@
 #include <string.h>
 #if defined(_WIN32)
 #include <windows.h>
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
 #include <io.h>
 #endif
 #else
@@ -353,7 +353,7 @@ void heartbeat(heartbeat_context* hb,
   }
 
 #if defined(_WIN32)
-  InterlockedExchange(&hb->lock, 0);
+  InterlockedExchangePointer(&hb->lock, 0);
 #else
   __sync_lock_release(&hb->lock);
 #endif
