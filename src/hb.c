@@ -272,7 +272,8 @@ void heartbeat(heartbeat_context* hb,
   }
 
 #if defined(_WIN32)
-  while (InterlockedExchangePointer(&hb->lock, 1)) {
+  // long guaranteed to be 32 bits on Windows
+  while (InterlockedExchange((long*) &hb->lock, 1)) {
 #else
   while (__sync_lock_test_and_set(&hb->lock, 1)) {
 #endif
@@ -353,7 +354,7 @@ void heartbeat(heartbeat_context* hb,
   }
 
 #if defined(_WIN32)
-  InterlockedExchangePointer(&hb->lock, 0);
+  InterlockedExchange((long*) &hb->lock, 0);
 #else
   __sync_lock_release(&hb->lock);
 #endif
