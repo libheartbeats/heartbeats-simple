@@ -74,8 +74,7 @@ int heartbeat_acc_init(heartbeat_acc_context* hb,
  * @param work
  * @param start_time (ns)
  * @param end_time (ns)
- * @param start_accuracy
- * @param end_accuracy
+ * @param accuracy
  */
 void heartbeat_acc(heartbeat_acc_context* hb,
                    uint64_t user_tag,

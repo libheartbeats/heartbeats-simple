@@ -80,8 +80,7 @@ int heartbeat_acc_pow_init(heartbeat_acc_pow_context* hb,
  * @param work
  * @param start_time (ns)
  * @param end_time (ns)
- * @param start_accuracy
- * @param end_accuracy
+ * @param accuracy
  * @param start_energy (uJ)
  * @param end_energy (uJ)
  */
