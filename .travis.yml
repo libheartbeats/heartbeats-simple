@@ -1,13 +1,9 @@
+dist: trusty
+sudo: false
+
 os:
   - linux
   - osx
-
-addons:
-  apt:
-    sources:
-      - kubuntu-backports
-    packages:
-      - cmake
 
 language: c
 
@@ -19,5 +15,5 @@ script:
   - mkdir _build
   - cd _build
   - cmake ..
-  - make
-  - make test
+  - cmake --build .
+  - ctest -VV
