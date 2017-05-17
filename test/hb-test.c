@@ -4,6 +4,7 @@
 // force assertions
 #undef NDEBUG
 #include <assert.h>
+#include <float.h>
 #include <inttypes.h>
 #include <stdlib.h>
 #include "heartbeat.h"
@@ -11,12 +12,20 @@
 #include "heartbeat-pow.h"
 #include "heartbeat-acc-pow.h"
 
+static double abs_dbl(double a) {
+  return a >= 0 ? a : -a;
+}
+
+static int equal_dbl(double a, double b) {
+  return abs_dbl(a - b) < DBL_EPSILON;
+}
+
 static const uint64_t window_size = 20;
 
 /**
  * Just tests that the functions are all there.
  */
-void test_hb(void) {
+static void test_hb(void) {
   heartbeat_context hb;
   heartbeat_record* window_buffer = malloc(window_size * sizeof(heartbeat_record));
   heartbeat_init(&hb, window_size, window_buffer, -1, NULL);
@@ -41,7 +50,7 @@ void test_hb(void) {
 /**
  * Just tests that the functions are all there.
  */
-void test_hb_acc(void) {
+static void test_hb_acc(void) {
   heartbeat_acc_context hb;
   heartbeat_acc_record* window_buffer = malloc(window_size * sizeof(heartbeat_acc_record));
   heartbeat_acc_init(&hb, window_size, window_buffer, -1, NULL);
@@ -71,7 +80,7 @@ void test_hb_acc(void) {
 /**
  * Just tests that the functions are all there.
  */
-void test_hb_pow(void) {
+static void test_hb_pow(void) {
   heartbeat_pow_context hb;
   heartbeat_pow_record* window_buffer = malloc(window_size * sizeof(heartbeat_pow_record));
   heartbeat_pow_init(&hb, window_size, window_buffer, -1, NULL);
@@ -103,8 +112,7 @@ void test_hb_pow(void) {
 /**
  * Just tests that the functions are all there.
  */
-void test_functions_exist() {
-  uint64_t window_size = 20;
+static void test_functions_exist(void) {
   heartbeat_acc_pow_context hb;
   heartbeat_acc_pow_record* window_buffer = malloc(window_size * sizeof(heartbeat_acc_pow_record));
   assert(window_buffer);
@@ -140,17 +148,17 @@ void test_functions_exist() {
 /**
  * Test issuing two heartbeats and verify that values are updated properly
  */
-void test_two_hb() {
-  uint64_t window_size = 1; // forces a new window on the second heartbeat
+static void test_two_hb(void) {
+  uint64_t ws = 1; // forces a new window on the second heartbeat
   int log_fd = -1;
   heartbeat_acc_pow_window_complete* cb = NULL;
   heartbeat_acc_pow_context hb;
-  heartbeat_acc_pow_record* window_buffer = malloc(window_size * sizeof(heartbeat_acc_pow_record));
+  heartbeat_acc_pow_record* window_buffer = malloc(ws * sizeof(heartbeat_acc_pow_record));
   assert(window_buffer);
-  assert(heartbeat_acc_pow_init(&hb, window_size, window_buffer, log_fd, cb) == 0);
+  assert(heartbeat_acc_pow_init(&hb, ws, window_buffer, log_fd, cb) == 0);
 
   // first verify basics
-  assert(hb_acc_pow_get_window_size(&hb) == window_size);
+  assert(hb_acc_pow_get_window_size(&hb) == ws);
   assert(hb_acc_pow_get_log_fd(&hb) == log_fd);
 
   // issue one heartbeat
@@ -171,19 +179,19 @@ void test_two_hb() {
   assert(hb_acc_pow_get_window_time(&hb) == end_time);
   assert(hb_acc_pow_get_global_work(&hb) == work);
   assert(hb_acc_pow_get_window_work(&hb) == work);
-  assert(hb_acc_pow_get_global_perf(&hb) == 1.0);
-  assert(hb_acc_pow_get_window_perf(&hb) == 1.0);
-  assert(hb_acc_pow_get_instant_perf(&hb) == 1.0);
+  assert(equal_dbl(hb_acc_pow_get_global_perf(&hb), 1.0));
+  assert(equal_dbl(hb_acc_pow_get_window_perf(&hb), 1.0));
+  assert(equal_dbl(hb_acc_pow_get_instant_perf(&hb), 1.0));
   assert(hb_acc_pow_get_global_accuracy(&hb) == accuracy);
   assert(hb_acc_pow_get_window_accuracy(&hb) == accuracy);
-  assert(hb_acc_pow_get_global_accuracy_rate(&hb) == accuracy);
-  assert(hb_acc_pow_get_window_accuracy_rate(&hb) == accuracy);
-  assert(hb_acc_pow_get_instant_accuracy_rate(&hb) == accuracy);
+  assert(equal_dbl(hb_acc_pow_get_global_accuracy_rate(&hb), accuracy));
+  assert(equal_dbl(hb_acc_pow_get_window_accuracy_rate(&hb), accuracy));
+  assert(equal_dbl(hb_acc_pow_get_instant_accuracy_rate(&hb), accuracy));
   assert(hb_acc_pow_get_global_energy(&hb) == end_energy);
   assert(hb_acc_pow_get_window_energy(&hb) == end_energy);
-  assert(hb_acc_pow_get_global_power(&hb) == 1.0);
-  assert(hb_acc_pow_get_window_power(&hb) == 1.0);
-  assert(hb_acc_pow_get_instant_power(&hb) == 1.0);
+  assert(equal_dbl(hb_acc_pow_get_global_power(&hb), 1.0));
+  assert(equal_dbl(hb_acc_pow_get_window_power(&hb), 1.0));
+  assert(equal_dbl(hb_acc_pow_get_instant_power(&hb), 1.0));
 
   // second heartbeat
   tag++;
@@ -199,25 +207,25 @@ void test_two_hb() {
   assert(hb_acc_pow_get_window_time(&hb) == end_time - start_time);
   assert(hb_acc_pow_get_global_work(&hb) == 2 * work);
   assert(hb_acc_pow_get_window_work(&hb) == work);
-  assert(hb_acc_pow_get_global_perf(&hb) == 1.0);
-  assert(hb_acc_pow_get_window_perf(&hb) == 1.0);
-  assert(hb_acc_pow_get_instant_perf(&hb) == 1.0);
+  assert(equal_dbl(hb_acc_pow_get_global_perf(&hb), 1.0));
+  assert(equal_dbl(hb_acc_pow_get_window_perf(&hb), 1.0));
+  assert(equal_dbl(hb_acc_pow_get_instant_perf(&hb), 1.0));
   assert(hb_acc_pow_get_global_accuracy(&hb) == 2 * accuracy);
   assert(hb_acc_pow_get_window_accuracy(&hb) == accuracy);
-  assert(hb_acc_pow_get_global_accuracy_rate(&hb) == accuracy);
-  assert(hb_acc_pow_get_window_accuracy_rate(&hb) == accuracy);
-  assert(hb_acc_pow_get_instant_accuracy_rate(&hb) == accuracy);
+  assert(equal_dbl(hb_acc_pow_get_global_accuracy_rate(&hb), accuracy));
+  assert(equal_dbl(hb_acc_pow_get_window_accuracy_rate(&hb), accuracy));
+  assert(equal_dbl(hb_acc_pow_get_instant_accuracy_rate(&hb), accuracy));
   assert(hb_acc_pow_get_global_energy(&hb) == end_energy);
   assert(hb_acc_pow_get_window_energy(&hb) == end_energy - start_energy);
-  assert(hb_acc_pow_get_global_power(&hb) == 1.0);
-  assert(hb_acc_pow_get_window_power(&hb) == 1.0);
-  assert(hb_acc_pow_get_instant_power(&hb) == 1.0);
+  assert(equal_dbl(hb_acc_pow_get_global_power(&hb), 1.0));
+  assert(equal_dbl(hb_acc_pow_get_window_power(&hb), 1.0));
+  assert(equal_dbl(hb_acc_pow_get_instant_power(&hb), 1.0));
 
   free(window_buffer);
 }
 
 int received_cb = 0;
-void callback(const heartbeat_acc_pow_context* hb) {
+static void callback(const heartbeat_acc_pow_context* hb) {
   if (hb != NULL) {
     received_cb++;
   }
@@ -226,14 +234,14 @@ void callback(const heartbeat_acc_pow_context* hb) {
 /**
  * Test that a specified callback function is executed on window completion
  */
-void test_callback() {
-  uint64_t window_size = 1;
+static void test_callback(void) {
+  uint64_t ws = 1;
   int log_fd = -1;
   heartbeat_acc_pow_window_complete* cb = &callback;
   heartbeat_acc_pow_context hb;
-  heartbeat_acc_pow_record* window_buffer = malloc(window_size * sizeof(heartbeat_acc_pow_record));
+  heartbeat_acc_pow_record* window_buffer = malloc(ws * sizeof(heartbeat_acc_pow_record));
   assert(window_buffer);
-  assert(heartbeat_acc_pow_init(&hb, window_size, window_buffer, log_fd, cb) == 0);
+  assert(heartbeat_acc_pow_init(&hb, ws, window_buffer, log_fd, cb) == 0);
   heartbeat_acc_pow(&hb, 0, 1, 0, 1000000000, 0, 0, 0);
   assert(received_cb);
 
@@ -243,8 +251,7 @@ void test_callback() {
 /**
  * Test that bad arguments don't crash and return proper error codes
  */
-void test_bad_arguments() {
-  uint64_t window_size = 20;
+static void test_bad_arguments(void) {
   heartbeat_acc_pow_context hb;
   heartbeat_acc_pow_record* window_buffer = malloc(window_size * sizeof(heartbeat_acc_pow_record));
   assert(window_buffer);
@@ -269,19 +276,19 @@ void test_bad_arguments() {
   assert(hb_acc_pow_get_window_time(NULL) == 0);
   assert(hb_acc_pow_get_global_work(NULL) == 0);
   assert(hb_acc_pow_get_window_work(NULL) == 0);
-  assert(hb_acc_pow_get_global_perf(NULL) == 0);
-  assert(hb_acc_pow_get_window_perf(NULL) == 0);
-  assert(hb_acc_pow_get_instant_perf(NULL) == 0);
+  assert(equal_dbl(hb_acc_pow_get_global_perf(NULL), 0));
+  assert(equal_dbl(hb_acc_pow_get_window_perf(NULL), 0));
+  assert(equal_dbl(hb_acc_pow_get_instant_perf(NULL), 0));
   assert(hb_acc_pow_get_global_accuracy(NULL) == 0);
   assert(hb_acc_pow_get_window_accuracy(NULL) == 0);
-  assert(hb_acc_pow_get_global_accuracy_rate(NULL) == 0);
-  assert(hb_acc_pow_get_window_accuracy_rate(NULL) == 0);
-  assert(hb_acc_pow_get_instant_accuracy_rate(NULL) == 0);
+  assert(equal_dbl(hb_acc_pow_get_global_accuracy_rate(NULL), 0));
+  assert(equal_dbl(hb_acc_pow_get_window_accuracy_rate(NULL), 0));
+  assert(equal_dbl(hb_acc_pow_get_instant_accuracy_rate(NULL), 0));
   assert(hb_acc_pow_get_global_energy(NULL) == 0);
   assert(hb_acc_pow_get_window_energy(NULL) == 0);
-  assert(hb_acc_pow_get_global_power(NULL) == 0);
-  assert(hb_acc_pow_get_window_power(NULL) == 0);
-  assert(hb_acc_pow_get_instant_power(NULL) == 0);
+  assert(equal_dbl(hb_acc_pow_get_global_power(NULL), 0));
+  assert(equal_dbl(hb_acc_pow_get_window_power(NULL), 0));
+  assert(equal_dbl(hb_acc_pow_get_instant_power(NULL), 0));
 
   // NULL window buffer
   assert(heartbeat_acc_pow_init(&hb, window_size, NULL, -1, NULL));
@@ -295,7 +302,7 @@ void test_bad_arguments() {
   free(window_buffer);
 }
 
-void test_hb_acc_pow(void) {
+static void test_hb_acc_pow(void) {
   test_functions_exist();
   test_two_hb();
   test_callback();

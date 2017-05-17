@@ -4,6 +4,7 @@
  * @author Connor Imes
  * @date 2015-07-15
  */
+#define _POSIX_C_SOURCE 1
 #include <errno.h>
 #include <inttypes.h>
 #include <stdio.h>

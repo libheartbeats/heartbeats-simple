@@ -14,7 +14,7 @@
 #define UNUSED(x) (void)(x)
 
 // Callback function for when a window is complete (window buffer is full)
-void window_complete(const heartbeat_pow_context* hb) {
+static void window_complete(const heartbeat_pow_context* hb) {
   // dummy function
   UNUSED(hb);
 }
@@ -26,7 +26,7 @@ void window_complete(const heartbeat_pow_context* hb) {
 #include <mach/mach.h>
 #include <time.h>
 #include <sys/time.h>
-static uint64_t get_time() {
+static uint64_t get_time(void) {
   // OS X does not have clock_gettime, use clock_get_time
   clock_serv_t cclock;
   mach_timespec_t mts;
@@ -38,7 +38,7 @@ static uint64_t get_time() {
 #else
 #include <time.h>
 #include <sys/time.h>
-static uint64_t get_time() {
+static uint64_t get_time(void) {
   // may require dependency on librt, depending on system
   struct timespec ts;
   clock_gettime(CLOCK_REALTIME, &ts);
@@ -52,21 +52,21 @@ static uint64_t get_time() {
  * In reality, these are platform-specific operations.
  */
 
-static uint64_t get_time() {
+static uint64_t get_time(void) {
   static uint64_t time = 0;
   return time += 1000000;
 }
 
-static uint64_t get_energy() {
+static uint64_t get_energy(void) {
   static uint64_t energy = 0;
   return energy += 1000;
 }
 
-static void sleep_one() {
+static void sleep_one(void) {
 #if defined(_WIN32)
   Sleep(1);
 #else
-  usleep(1000);
+  sleep(1);
 #endif
 }
 
@@ -76,7 +76,7 @@ int main(void) {
   const uint64_t window_size = 5;
   uint64_t start_time, end_time;
   uint64_t start_energy, end_energy;
-  int fd = fileno(stdout);
+  int fd = STDOUT_FILENO;
 
   // Alternatively, a window buffer can be allocated on the stack with a
   // statically sized array - just don't let it go out of scope before
