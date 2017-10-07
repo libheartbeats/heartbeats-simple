@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 2.8.9)
 
 project(heartbeats-simple)
-set(PROJECT_VERSION 0.3.3)
+set(VERSION_MAJOR 0)
+set(VERSION_MINOR 3)
+set(VERSION_PATCH 3)
+set(PROJECT_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 
@@ -29,6 +32,10 @@ add_library(heartbeats-simple $<TARGET_OBJECTS:hbs>
                               $<TARGET_OBJECTS:hbs-acc>
                               $<TARGET_OBJECTS:hbs-pow>
                               $<TARGET_OBJECTS:hbs-acc-pow>)
+if (BUILD_SHARED_LIBS)
+  set_target_properties(heartbeats-simple PROPERTIES VERSION ${PROJECT_VERSION}
+                                                     SOVERSION ${VERSION_MAJOR})
+endif()
 
 
 # Examples

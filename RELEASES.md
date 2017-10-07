@@ -1,5 +1,9 @@
 # Release Notes
 
+## Unreleased
+
+ * Added VERSION and SOVERSION properties to shared object library
+
 ## v0.3.3 - 2017-10-02
 
  * Fixed header documentation for accuracy function parameters
