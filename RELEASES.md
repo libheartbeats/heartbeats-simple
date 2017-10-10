@@ -1,6 +1,6 @@
 # Release Notes
 
-## Unreleased
+## v0.3.4 - 2017-10-10
 
  * Added VERSION and SOVERSION properties to shared object library
 
