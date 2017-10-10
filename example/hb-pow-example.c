@@ -76,7 +76,7 @@ int main(void) {
   const uint64_t window_size = 5;
   uint64_t start_time, end_time;
   uint64_t start_energy, end_energy;
-  int fd = STDOUT_FILENO;
+  int fd = 1; // stdout
 
   // Alternatively, a window buffer can be allocated on the stack with a
   // statically sized array - just don't let it go out of scope before

@@ -1,5 +1,9 @@
 # Release Notes
 
+## v0.3.5 - 2017-10-10
+
+ * Fixed "MSYS Makefiles" generator for CMake builds on Windows
+
 ## v0.3.4 - 2017-10-10
 
  * Added VERSION and SOVERSION properties to shared object library
