@@ -1,5 +1,9 @@
 # Release Notes
 
+## Unreleased
+
+ * Added multiarch support using GNU standard installation directories
+
 ## v0.3.5 - 2017-10-10
 
  * Fixed "MSYS Makefiles" generator for CMake builds on Windows
