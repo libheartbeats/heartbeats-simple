@@ -9,24 +9,28 @@
 
 
 ## [v0.3.6] - 2017-11-13
+
 ### Added
 
 * Multiarch support using GNU standard installation directories
 
 
 ## [v0.3.5] - 2017-10-10
+
 ### Fixed
 
 * Fixed "MSYS Makefiles" generator for CMake builds on Windows
 
 
 ## [v0.3.4] - 2017-10-10
+
 ### Added
 
 * VERSION and SOVERSION properties to shared object library
 
 
 ## [v0.3.3] - 2017-10-02
+
 ### Added
 
 * Added AUTHORS and RELEASES.md files
@@ -38,6 +42,7 @@
 
 
 ## [v0.3.2] - 2017-02-06
+
 ### Added
 
 * Added AppVeyor test configuration for Windows continuous integration
@@ -57,12 +62,14 @@
 
 
 ## [v0.3.1] - 2016-10-20
+
 ### Changed
 
 * Disabled forcing of fPIC - still used by default, but can be overridden
 
 
 ## [v0.3.0] - 2016-06-18
+
 ### Added
 
 * Added a single header file to wrap individual headers
@@ -76,12 +83,14 @@
 
 
 ## [v0.2.2] - 2016-05-18
+
 ### Fixed
 
 * Fixed instant performance logging
 
 
 ## v0.2.1 - 2016-03-03
+
 ### Added
 
 * Initial public release
