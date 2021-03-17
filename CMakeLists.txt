@@ -1,14 +1,15 @@
-cmake_minimum_required(VERSION 2.8.9)
+# SPDX-License-Identifier: BSD-3-Clause
 
-project(heartbeats-simple)
-set(VERSION_MAJOR 0)
-set(VERSION_MINOR 3)
-set(VERSION_PATCH 6)
-set(PROJECT_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
+cmake_minimum_required(VERSION 3.1)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -std=c99")
+project(heartbeats-simple VERSION 0.3.6
+                          LANGUAGES C)
 
-include_directories(${PROJECT_SOURCE_DIR}/inc)
+set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_EXTENSIONS OFF)
+add_compile_options(-Wall)
+
 
 if(CMAKE_HOST_UNIX)
   include(GNUInstallDirs)
@@ -22,50 +23,49 @@ if (NOT DEFINED CMAKE_POSITION_INDEPENDENT_CODE)
   set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 endif()
 
+enable_testing()
+add_subdirectory(test)
+add_subdirectory(example)
+
+
 # Libraries
 
 add_library(hbs OBJECT src/hb.c src/hb-util.c src/hb-container.c)
+target_include_directories(hbs PRIVATE ${PROJECT_SOURCE_DIR}/inc)
 
 add_library(hbs-acc OBJECT src/hb.c src/hb-util.c src/hb-acc-util.c src/hb-container.c)
-set_target_properties(hbs-acc PROPERTIES COMPILE_DEFINITIONS "HEARTBEAT_MODE_ACC;HEARTBEAT_USE_ACC")
+target_include_directories(hbs-acc PRIVATE ${PROJECT_SOURCE_DIR}/inc)
+target_compile_definitions(hbs-acc PRIVATE HEARTBEAT_MODE_ACC HEARTBEAT_USE_ACC)
 
 add_library(hbs-pow OBJECT src/hb.c src/hb-util.c src/hb-pow-util.c src/hb-container.c)
-set_target_properties(hbs-pow PROPERTIES COMPILE_DEFINITIONS "HEARTBEAT_MODE_POW;HEARTBEAT_USE_POW")
+target_include_directories(hbs-pow PRIVATE ${PROJECT_SOURCE_DIR}/inc)
+target_compile_definitions(hbs-pow PRIVATE HEARTBEAT_MODE_POW HEARTBEAT_USE_POW)
 
 add_library(hbs-acc-pow OBJECT src/hb.c src/hb-util.c src/hb-acc-util.c src/hb-pow-util.c src/hb-container.c)
-set_target_properties(hbs-acc-pow PROPERTIES COMPILE_DEFINITIONS "HEARTBEAT_MODE_ACC_POW;HEARTBEAT_USE_ACC;HEARTBEAT_USE_POW")
+target_include_directories(hbs-acc-pow PRIVATE ${PROJECT_SOURCE_DIR}/inc)
+target_compile_definitions(hbs-acc-pow PRIVATE HEARTBEAT_MODE_ACC_POW HEARTBEAT_USE_ACC HEARTBEAT_USE_POW)
 
 add_library(heartbeats-simple $<TARGET_OBJECTS:hbs>
                               $<TARGET_OBJECTS:hbs-acc>
                               $<TARGET_OBJECTS:hbs-pow>
                               $<TARGET_OBJECTS:hbs-acc-pow>)
+target_include_directories(heartbeats-simple PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/inc>
+                                                    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}>)
+set(HEARTBEATS_SIMPLE_HEADERS inc/heartbeat-common-types.h
+                              inc/heartbeat.h
+                              inc/heartbeat-acc.h
+                              inc/heartbeat-pow.h
+                              inc/heartbeat-acc-pow.h
+                              inc/heartbeats-simple.h
+                              inc/heartbeat-container.h
+                              inc/heartbeat-acc-container.h
+                              inc/heartbeat-pow-container.h
+                              inc/heartbeat-acc-pow-container.h)
+set_target_properties(heartbeats-simple PROPERTIES PUBLIC_HEADER "${HEARTBEATS_SIMPLE_HEADERS}")
 if (BUILD_SHARED_LIBS)
   set_target_properties(heartbeats-simple PROPERTIES VERSION ${PROJECT_VERSION}
-                                                     SOVERSION ${VERSION_MAJOR})
+                                                     SOVERSION ${PROJECT_VERSION_MAJOR})
 endif()
-
-
-# Examples
-
-add_executable(hb-pow-example example/hb-pow-example.c)
-target_link_libraries(hb-pow-example heartbeats-simple)
-
-
-# Tests
-
-add_executable(hb-test test/hb-test.c)
-target_link_libraries(hb-test heartbeats-simple)
-
-add_executable(hb-container-test test/hb-container-test.c)
-target_link_libraries(hb-container-test heartbeats-simple)
-
-enable_testing()
-macro(add_unit_test target)
-  add_test(${target} ${EXECUTABLE_OUTPUT_PATH}/${target})
-endmacro(add_unit_test)
-
-add_unit_test(hb-test)
-add_unit_test(hb-container-test)
 
 
 # pkg-config
@@ -86,9 +86,12 @@ configure_file(
 
 # Install
 
-install(TARGETS heartbeats-simple DESTINATION ${CMAKE_INSTALL_LIBDIR})
-install(DIRECTORY inc/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
-install(DIRECTORY ${CMAKE_BINARY_DIR}/pkgconfig/ DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+install(TARGETS heartbeats-simple
+        EXPORT HeartbeatsSimpleTargets
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
+install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/ DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 
 # Uninstall

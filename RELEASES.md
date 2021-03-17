@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Changed
+
+* Increased minimum CMake version from 2.8.9 to 3.1
+* Modernize CMake usage
+
 
 ## [v0.3.6] - 2017-11-13
 ### Added
