@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+* CMake helper to find heartbeats-simple without using pkg-config
+
 ### Changed
 
 * Increased minimum CMake version from 2.8.9 to 3.1

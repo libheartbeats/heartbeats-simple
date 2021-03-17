@@ -84,6 +84,26 @@ configure_file(
 )
 
 
+# CMake package helper
+
+include(CMakePackageConfigHelpers)
+
+set(HEARTBEATS_SIMPLE_CMAKE_CONFIG_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/HeartbeatsSimple)
+set(CONFIG_TARGETS_FILE HeartbeatsSimpleTargets.cmake)
+
+configure_package_config_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/Config.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/HeartbeatsSimpleConfig.cmake
+  INSTALL_DESTINATION ${HEARTBEATS_SIMPLE_CMAKE_CONFIG_DIR}
+)
+
+write_basic_package_version_file(
+  ${CMAKE_CURRENT_BINARY_DIR}/HeartbeatsSimpleConfigVersion.cmake
+  VERSION ${PROJECT_VERSION}
+  COMPATIBILITY SameMajorVersion
+)
+
+
 # Install
 
 install(TARGETS heartbeats-simple
@@ -92,6 +112,12 @@ install(TARGETS heartbeats-simple
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
 install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/ DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/HeartbeatsSimpleConfig.cmake
+              ${CMAKE_CURRENT_BINARY_DIR}/HeartbeatsSimpleConfigVersion.cmake
+        DESTINATION ${HEARTBEATS_SIMPLE_CMAKE_CONFIG_DIR})
+install(EXPORT HeartbeatsSimpleTargets
+        DESTINATION ${HEARTBEATS_SIMPLE_CMAKE_CONFIG_DIR}
+        NAMESPACE HeartbeatsSimple::)
 
 
 # Uninstall
