@@ -2,6 +2,28 @@ os:
   - linux
   - osx
 
+arch:
+  - amd64
+  - arm64
+  - ppc64le
+  - s390x
+
+matrix:
+  include:
+    # Different distros and compilers on amd64
+    - dist: bionic
+      compiler: gcc
+    - dist: bionic
+      compiler: clang
+    - dist: focal
+      compiler: gcc
+    - dist: focal
+      compiler: clang
+    # Different architectures, gcc only
+    - arch: arm64
+    - arch: ppc64le
+    - arch: s390x
+
 language: c
 
 compiler:
