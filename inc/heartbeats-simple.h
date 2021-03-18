@@ -15,6 +15,11 @@ extern "C" {
 #include "heartbeat-pow.h"
 #include "heartbeat-acc-pow.h"
 
+#include "heartbeat-container.h"
+#include "heartbeat-acc-container.h"
+#include "heartbeat-pow-container.h"
+#include "heartbeat-acc-pow-container.h"
+
 #ifdef __cplusplus
 }
 #endif

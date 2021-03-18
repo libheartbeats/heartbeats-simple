@@ -3,10 +3,8 @@
  */
 #include <inttypes.h>
 #include <stdlib.h>
-#include "heartbeat-container.h"
-#include "heartbeat-acc-container.h"
-#include "heartbeat-pow-container.h"
-#include "heartbeat-acc-pow-container.h"
+
+#include <heartbeats-simple.h>
 
 static const uint64_t window_size = 20;
 

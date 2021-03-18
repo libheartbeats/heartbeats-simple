@@ -5,6 +5,7 @@
 ### Added
 
 * CMake helper to find heartbeats-simple without using pkg-config
+* Container headers to heartbeats-simple.h
 
 ### Changed
 
