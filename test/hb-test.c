@@ -7,10 +7,8 @@
 #include <float.h>
 #include <inttypes.h>
 #include <stdlib.h>
-#include "heartbeat.h"
-#include "heartbeat-acc.h"
-#include "heartbeat-pow.h"
-#include "heartbeat-acc-pow.h"
+
+#include <heartbeats-simple.h>
 
 static double abs_dbl(double a) {
   return a >= 0 ? a : -a;
