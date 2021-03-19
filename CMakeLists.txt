@@ -12,11 +12,6 @@ add_compile_options(-Wall)
 
 include(GNUInstallDirs)
 
-# force fPIC unless overridden (not automatically forwarded through OBJECT libraries when BUILD_SHARED_LIBS is set)
-if (NOT DEFINED CMAKE_POSITION_INDEPENDENT_CODE)
-  set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
-endif()
-
 enable_testing()
 add_subdirectory(test)
 add_subdirectory(example)
@@ -38,6 +33,12 @@ target_compile_definitions(hbs-pow PRIVATE HEARTBEAT_MODE_POW HEARTBEAT_USE_POW)
 add_library(hbs-acc-pow OBJECT src/hb.c src/hb-util.c src/hb-acc-util.c src/hb-pow-util.c src/hb-container.c)
 target_include_directories(hbs-acc-pow PRIVATE ${PROJECT_SOURCE_DIR}/inc)
 target_compile_definitions(hbs-acc-pow PRIVATE HEARTBEAT_MODE_ACC_POW HEARTBEAT_USE_ACC HEARTBEAT_USE_POW)
+
+# Some environments require explicit PIC for OBJECT libs used in SHARED libs, e.g., GCC 4.8.5 on CentOS 7
+# However, don't override user-specified PIC value, if set
+if (BUILD_SHARED_LIBS AND NOT DEFINED CMAKE_POSITION_INDEPENDENT_CODE)
+  set_target_properties(hbs hbs-acc hbs-pow hbs-acc-pow PROPERTIES POSITION_INDEPENDENT_CODE ON)
+endif()
 
 add_library(heartbeats-simple $<TARGET_OBJECTS:hbs>
                               $<TARGET_OBJECTS:hbs-acc>

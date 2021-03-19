@@ -11,6 +11,7 @@
 
 * Increased minimum CMake version from 2.8.9 to 3.1
 * Modernize CMake usage
+* Position-independent code (-fPIC compile flag) now only set by default on shared library objects
 
 
 ## [v0.3.6] - 2017-11-13
