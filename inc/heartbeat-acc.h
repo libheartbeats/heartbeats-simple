@@ -93,6 +93,16 @@ void heartbeat_acc(heartbeat_acc_context* hb,
 int hb_acc_log_header(int fd);
 
 /**
+ * Write the header text to a log file.
+ * The file descriptor provided during heartbeat init is used.
+ * Sets errno on failure.
+ *
+ * @param hb
+ * @return 0 on success, error code otherwise
+ */
+int hb_acc_ctx_log_header(const heartbeat_acc_context* hb);
+
+/**
  * Logs the circular window buffer up to the current read index.
  * Sets errno on failure.
  *
@@ -101,6 +111,16 @@ int hb_acc_log_header(int fd);
  * @return 0 on success, error code otherwise
  */
 int hb_acc_log_window_buffer(const heartbeat_acc_context* hb, int fd);
+
+/**
+ * Logs the circular window buffer up to the current read index.
+ * The file descriptor provided during heartbeat init is used.
+ * Sets errno on failure.
+ *
+ * @param hb
+ * @return 0 on success, error code otherwise
+ */
+int hb_acc_ctx_log_window_buffer(const heartbeat_acc_context* hb);
 
 /**
  * Get the size of the window buffer.

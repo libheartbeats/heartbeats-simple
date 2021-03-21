@@ -147,6 +147,30 @@ int hb_log_header(int fd) {
 }
 
 #if defined(HEARTBEAT_MODE_ACC)
+int hb_acc_ctx_log_header(const heartbeat_acc_context* hb) {
+#elif defined(HEARTBEAT_MODE_POW)
+int hb_pow_ctx_log_header(const heartbeat_pow_context* hb) {
+#elif defined(HEARTBEAT_MODE_ACC_POW)
+int hb_acc_pow_ctx_log_header(const heartbeat_acc_pow_context* hb) {
+#else
+int hb_ctx_log_header(const heartbeat_context* hb) {
+#endif
+  if (hb == NULL) {
+    errno = EINVAL;
+    return errno;
+  }
+#if defined(HEARTBEAT_MODE_ACC)
+  return hb_acc_log_header(hb->ws.log_fd);
+#elif defined(HEARTBEAT_MODE_POW)
+  return hb_pow_log_header(hb->ws.log_fd);
+#elif defined(HEARTBEAT_MODE_ACC_POW)
+  return hb_acc_pow_log_header(hb->ws.log_fd);
+#else
+  return hb_log_header(hb->ws.log_fd);
+#endif
+}
+
+#if defined(HEARTBEAT_MODE_ACC)
 int hb_acc_log_window_buffer(const heartbeat_acc_context* hb, int fd) {
 #elif defined(HEARTBEAT_MODE_POW)
 int hb_pow_log_window_buffer(const heartbeat_pow_context* hb, int fd) {
@@ -227,6 +251,30 @@ int hb_log_window_buffer(const heartbeat_context* hb, int fd) {
   // preserve first error
   errno = err_save ? err_save : errno;
   return errno;
+}
+
+#if defined(HEARTBEAT_MODE_ACC)
+int hb_acc_ctx_log_window_buffer(const heartbeat_acc_context* hb) {
+#elif defined(HEARTBEAT_MODE_POW)
+int hb_pow_ctx_log_window_buffer(const heartbeat_pow_context* hb) {
+#elif defined(HEARTBEAT_MODE_ACC_POW)
+int hb_acc_pow_ctx_log_window_buffer(const heartbeat_acc_pow_context* hb) {
+#else
+int hb_ctx_log_window_buffer(const heartbeat_context* hb) {
+#endif
+  if (hb == NULL) {
+    errno = EINVAL;
+    return errno;
+  }
+#if defined(HEARTBEAT_MODE_ACC)
+  return hb_acc_log_window_buffer(hb, hb->ws.log_fd);
+#elif defined(HEARTBEAT_MODE_POW)
+  return hb_pow_log_window_buffer(hb, hb->ws.log_fd);
+#elif defined(HEARTBEAT_MODE_ACC_POW)
+  return hb_acc_pow_log_window_buffer(hb, hb->ws.log_fd);
+#else
+  return hb_log_window_buffer(hb, hb->ws.log_fd);
+#endif
 }
 
 #define ONE_MILLION 1000000.0

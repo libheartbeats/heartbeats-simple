@@ -4,8 +4,9 @@
 
 ### Added
 
-* CMake helper to find heartbeats-simple without using pkg-config
+* Functions to log header and window buffers using a heartbeat's own file descriptor
 * Container headers to heartbeats-simple.h
+* CMake helper to find heartbeats-simple without using pkg-config
 
 ### Changed
 
