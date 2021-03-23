@@ -1,6 +1,6 @@
 # Release Notes
 
-## [Unreleased]
+## [v0.4.0] - 2021-03-23
 
 ### Added
 
@@ -103,7 +103,7 @@
 * Initial public release
 
 
-[Unreleased]: https://github.com/libheartbeats/heartbeats-simple/compare/v0.3.6...HEAD
+[v0.4.0]: https://github.com/libheartbeats/heartbeats-simple/compare/v0.3.6...v0.4.0
 [v0.3.6]: https://github.com/libheartbeats/heartbeats-simple/compare/v0.3.5...v0.3.6
 [v0.3.5]: https://github.com/libheartbeats/heartbeats-simple/compare/v0.3.4...v0.3.5
 [v0.3.4]: https://github.com/libheartbeats/heartbeats-simple/compare/v0.3.3...v0.3.4
