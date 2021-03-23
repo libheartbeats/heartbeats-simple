@@ -57,6 +57,34 @@ pkg-config --cflags heartbeats-simple
 pkg-config --libs heartbeats-simple
 ```
 
+## Example
+
+The following is a simple heartbeats example, ignoring error checks and
+additional `#include` statements, which are platform-specific.
+
+```C
+#include <heartbeats-simple.h>
+
+void do_application_loop(uint64_t iterations, uint64_t window_len) {
+  heartbeat_context hb;
+  heartbeat_record* window_buf = malloc(window_len * sizeof(heartbeat_record));
+  int fd = open("heartbeat.log", O_CREAT | O_WRONLY | O_TRUNC, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+  heartbeat_init(&hb, window_len, window_buf, fd, NULL);
+  hb_ctx_log_header(&hb);
+
+  for (uint64_t i = 0; i < iterations; i++) {
+    uint64_t start_time = get_time_in_ns();
+    do_work();
+    uint64_t end_time = get_time_in_ns();
+    heartbeat(&hb, i, 1, start_time, end_time);
+  }
+
+  hb_ctx_log_window_buffer(&hb); // flush remaining window data to log file
+  close(fd);
+  free(window_buf);
+}
+```
+
 ## Project Source
 
 Find this and related project sources at the [libheartbeats organization on GitHub](https://github.com/libheartbeats).  
