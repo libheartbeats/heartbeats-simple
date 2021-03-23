@@ -40,6 +40,23 @@ To uninstall, run with proper privileges:
 make uninstall
 ```
 
+## Linking
+
+If your project uses CMake, you can find the `HeartbeatsSimple` package and
+link with the `heartbeats-simple` library target in that namespace, e.g.:
+
+``` cmake
+find_package(HeartbeatsSimple REQUIRED)
+target_link_libraries(foo PRIVATE HeartbeatsSimple::heartbeats-simple)
+```
+
+Otherwise, get flag and linker information with `pkg-config`, e.g.:
+
+``` sh
+pkg-config --cflags heartbeats-simple
+pkg-config --libs heartbeats-simple
+```
+
 ## Project Source
 
 Find this and related project sources at the [libheartbeats organization on GitHub](https://github.com/libheartbeats).  
